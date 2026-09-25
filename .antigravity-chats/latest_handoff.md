@@ -1,0 +1,25 @@
+# 🦎 Antigravity Local Chat & Session Backup
+
+> **Open-Source Safe:** This file contains conversation context and code checkpoints only. No credentials, tokens, or private keys are ever written to disk.
+
+### 📌 Session Metadata
+- **Account Source:** `active.account@gmail.com`
+- **Saved At:** 9/25/2026, 8:21:33 AM
+- **Checkpoint ID:** `cp_1790304693191_o21z0`
+
+---
+
+## 🔄 Context Handoff for Account 2
+When switching to your 2nd Google account, copy the handoff text below into your new Antigravity chat to continue exactly where you left off:
+
+```text
+Continuing session from account [active.account@gmail.com].
+Please continue the ongoing implementation without missing context.
+```
+
+---
+
+### 💡 How to Use This in Account 2:
+1. Switch accounts using the **Antigravity Switcher** dashboard (or press `Alt+A`).
+2. Open a new chat in Antigravity.
+3. Paste the prompt above. The AI will immediately understand the previous context, current file, and next steps!

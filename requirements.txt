@@ -1,0 +1,31 @@
+# ReflexAgent: The Type-Safe Sub-50ms Dual-Brain AI Agent
+# Powered by Laya (System 1 Local) + Jev (System 1 Cloud) + LiteLLM (System 2 Reasoning)
+
+# System 1: Non-autoregressive fast typed decisions
+laya>=0.3.20
+typesafe-sdk>=0.7.1
+transformers>=4.48.0
+safetensors>=0.4.0
+torch>=2.0.0
+
+# System 2: LLM reasoning and response generation
+litellm>=1.98.0
+openai>=2.54.0
+
+# Data schemas & validation
+pydantic>=2.12.0
+pydantic-settings>=2.15.0
+
+# API & Web UI Server
+fastapi>=0.141.0
+uvicorn>=0.52.0
+websockets>=17.0.0
+
+# CLI and Formatting
+rich>=13.8.0
+typer>=0.20.0
+python-dotenv>=1.2.0
+
+# Utilities & Networking
+httpx>=0.28.0
+aiofiles>=23.2.0
