@@ -7,7 +7,7 @@
   <meta name="description" content="Dual-Brain vernacular agricultural intelligence agent combining sub-35ms Laya ModernBERT reflex, OpenZess Krishi Panchayat multi-agent debate, l-data-seT---ML empirical models, and Google Gemini 1.5 Flash vision.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Leaflet.js for Satellite Imagery & Earth Observation Mandi Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -16,318 +16,277 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body class="dark-theme">
+  <!-- Glowing Background Orbs -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
 
   <div class="app-layout">
-    <!-- ====================================================================
-         Unified Top Navigation Header (Decongested Single Bar)
-         ==================================================================== -->
-    <header class="app-header">
-      <!-- Left: Logo & Brand -->
+    <!-- Header / Navbar (Clean, Decongested Minimalist) -->
+    <header class="app-header glass-card">
       <div class="logo-group">
         <div class="logo-badge">
           <span class="pulse-ring"></span>
           🌾
         </div>
-        <div class="brand-text">
-          <div class="brand-title-row">
-            <span class="brand-title">KisanZess</span>
-            <span class="brand-badge">Dual-Brain</span>
-          </div>
-          <span class="brand-subtitle">Sub-35ms Vernacular Co-Pilot</span>
+        <div>
+          <h1 class="brand-title">KisanZess <span class="tag">Dual-Brain Agri AI</span></h1>
+          <p class="brand-subtitle">Sub-35ms Vernacular Co-Pilot • Google Cloud Code for Communities</p>
         </div>
       </div>
 
-      <!-- Center: Segmented Navigation Switcher -->
-      <nav class="app-nav-tabs" role="tablist">
-        <button class="nav-tab active" data-tab="tab-chat" role="tab" aria-selected="true">
-          <span class="tab-icon">💬</span>
-          <span class="tab-text">Krishi Varta</span>
-        </button>
-        <button class="nav-tab" data-tab="tab-soil-ml" role="tab" aria-selected="false">
-          <span class="tab-icon">🌱</span>
-          <span class="tab-text">Soil & Crop ML</span>
-        </button>
-        <button class="nav-tab" data-tab="tab-panchayat" role="tab" aria-selected="false">
-          <span class="tab-icon">🏛️</span>
-          <span class="tab-text">Krishi Panchayat</span>
-        </button>
-        <button class="nav-tab" data-tab="tab-memory" role="tab" aria-selected="false">
-          <span class="tab-icon">📜</span>
-          <span class="tab-text">Khet-Vault</span>
-        </button>
-      </nav>
+      <!-- Live Mandi Mini Ticker -->
+      <div class="mandi-ticker glass-subcard">
+        <span class="ticker-label">🟢 LIVE APMC:</span>
+        <span class="ticker-item">Indore: <strong>Soybean ₹4,650</strong></span>
+        <span class="ticker-sep">•</span>
+        <span class="ticker-item">Agartala: <strong>Tomato ₹2,450</strong></span>
+        <span class="ticker-sep">•</span>
+        <span class="ticker-item">Kolar: <strong>Paddy ₹2,183</strong></span>
+      </div>
 
-      <!-- Right: Live Status, Mode Toggle & Benchmarks -->
-      <div class="header-actions">
-        <div class="status-indicator" title="System 1 Reflex Sub-35ms latency ready">
+      <div class="header-status-group">
+        <div class="status-indicator">
           <span class="status-dot green"></span>
           <span class="status-text" id="speed-badge">⚡ &lt; 35ms Reflex</span>
         </div>
-
-        <div id="voice-indicator" class="voice-wave-container" title="Vernacular Speech Audio Active">
+        <div id="voice-indicator" class="voice-wave-container" title="Vernacular Speech Audio">
           <span class="voice-bar"></span>
           <span class="voice-bar"></span>
           <span class="voice-bar"></span>
           <span class="voice-label">Audio</span>
         </div>
-
-        <button id="btn-field-mode" class="header-btn" title="Toggle High-Contrast Outdoor Sunlight Mode">
+        <button id="btn-field-mode" class="btn-secondary-pill" title="Toggle Outdoor High-Contrast Sunlight Mode">
           <span>☀️ Field Mode</span>
         </button>
-
-        <button id="btn-run-benchmark" class="header-btn primary">
+        <button id="btn-run-benchmark" class="btn-primary-pill">
           <span>⚡ Benchmark</span>
         </button>
       </div>
     </header>
 
-    <!-- ====================================================================
-         Tab 1: Krishi Varta Console (Spacious Chat + Decongested Sidebar)
-         ==================================================================== -->
-    <div id="tab-chat" class="tab-pane active">
-      <main class="dashboard-grid" id="main-dashboard-grid">
-        
-        <!-- Main Chat Canvas Column -->
-        <section class="chat-section glass-card" aria-label="Interactive Farm Co-Pilot Console">
-          
-          <!-- Clean, Decongested Chat Header -->
-          <div class="chat-header">
-            <div class="chat-header-left">
-              <div class="chat-title-group">
-                <span class="chat-icon">💬</span>
-                <h2>Krishi Varta Console</h2>
-              </div>
-              <div class="farmer-pill-badge" title="Persistent context from Khet-Vault">
-                <span class="farmer-avatar">👨‍🌾</span>
-                <span>रामेश्वर पटेल (Indore • 4.0 Acres)</span>
-              </div>
-            </div>
+    <!-- Navigation Tabs (Sleek Segmented Pill Bar) -->
+    <nav class="app-nav-tabs glass-subcard">
+      <button class="nav-tab active" data-tab="tab-chat">💬 Krishi Varta (Dual-Brain Chat)</button>
+      <button class="nav-tab" data-tab="tab-soil-ml">🌱 Soil & Crop ML (l-data-seT---ML)</button>
+      <button class="nav-tab" data-tab="tab-panchayat">🏛️ Krishi Panchayat (4-Agent WarRoom)</button>
+      <button class="nav-tab" data-tab="tab-memory">📜 Khet-Vault Memory (FARM_MEMORY.md)</button>
+    </nav>
 
-            <div class="chat-header-right">
-              <div class="mode-select-wrapper">
-                <span class="mode-label">Mode:</span>
+    <!-- Tab 1: Krishi Varta Console (Chat + Telemetry) -->
+    <div id="tab-chat" class="tab-pane active">
+      <main class="dashboard-grid">
+        <!-- Left Column: Spacious Interactive Chat Canvas -->
+        <section class="chat-section glass-card" aria-label="Interactive Agent Console">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="icon">💬</span>
+              <h2>Krishi Varta: Vernacular Farm Console</h2>
+            </div>
+            
+            <!-- Compact Farmer Profile & Mode in Header -->
+            <div class="header-tools-row">
+              <div class="farmer-compact-badge">
+                <span class="avatar-mini">👨‍🌾</span>
+                <span>रामेश्वर पटेल (Indore • 4.0 Acres)</span>
+                <span class="memory-mini-dot" title="Khet-Vault Active">🧠</span>
+              </div>
+              <div class="mode-selector">
                 <select id="agent-mode-select" class="custom-select">
                   <option value="hybrid" selected>Dual-Brain (Reflex + Panchayat)</option>
-                  <option value="pure_reflex">Pure Reflex (&lt;35ms, $0)</option>
+                  <option value="pure_reflex">Pure Reflex (Sub-35ms, $0)</option>
                 </select>
               </div>
-
-              <button id="btn-toggle-sidebar" class="icon-toggle-btn" title="Toggle Telemetry Sidebar (Full Width Chat)">
-                <span class="toggle-icon">📊</span>
-                <span class="toggle-text">Telemetry</span>
-              </button>
             </div>
           </div>
 
-          <!-- Expansive, Airy Messages Stream Container -->
+          <!-- Quick Action Crisis Carousel (Clean, Low-Profile) -->
+          <div class="crisis-ribbon">
+            <button class="crisis-chip" data-query="दुकानदार ₹2,800 का जहरीला केमिकल टॉनिक बेच रहा है। क्या मैं खरीदूँ या कोई सस्ता जैविक उपाय है?">
+              <span>🚨 ₹2,800 दवा vs जैविक ₹180 बचत</span>
+            </button>
+            <button class="crisis-chip" data-query="इंदौर मंडी में आढ़ती सोयाबीन ₹1,900/क्विंटल दे रहा है। क्या आज ही बेचूँ या रोकूँ?">
+              <span>📉 मंडी आढ़ती हेराफेरी से बचाव (+₹550)</span>
+            </button>
+            <button class="crisis-chip" data-query="गेहूं की पत्तियां पीली पड़ रही हैं। क्या 2 बोरी यूरिया और डाल दूँ या जिंक की कमी है?">
+              <span>🧪 यूरिया छिड़काव vs संतुलित NPK</span>
+            </button>
+            <button class="crisis-chip" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह अगेती झुलसा (Early Blight) रोग है?">
+              <span>📸 पत्ती रोग त्वरित Gemini विजन</span>
+            </button>
+          </div>
+
+          <!-- Spacious Chat Stream Area -->
           <div id="chat-messages" class="messages-container" role="log" aria-live="polite">
-            
-            <!-- Elegant Welcome Message Card -->
-            <div class="message assistant-msg welcome-card">
+            <div class="message assistant-msg glass-subcard">
               <div class="msg-header">
-                <span class="role-badge reflex-badge">⚡ KisanZess Dual-Brain Co-Pilot</span>
-                <span class="timestamp">Online</span>
+                <span class="role-badge reflex-badge">⚡ KisanZess Co-Pilot</span>
+                <span class="timestamp">Ready</span>
               </div>
               <div class="msg-body">
-                <p class="welcome-lead">
-                  नमस्ते रामेश्वर जी! मैं <strong>KisanZess</strong> हूँ — आपका बहुभाषी डिजिटल कृषि एवं मंडी सलाहकार।
-                </p>
-                
-                <div class="welcome-features-grid">
-                  <div class="feature-item">
-                    <span class="f-icon">⚡</span>
-                    <div>
-                      <strong>30ms में ताज़ा मंडी भाव</strong>
-                      <p>इंदौर, अगरतला या आज़ादपुर मंडी के वास्तविक दाम जानें।</p>
-                    </div>
-                  </div>
-
-                  <div class="feature-item">
-                    <span class="f-icon">🌱</span>
-                    <div>
-                      <strong>मृदा परीक्षण (ML Model)</strong>
-                      <p>N-P-K व वर्षा इनपुट से सबसे उपयुक्त फसल और खाद चुनें।</p>
-                    </div>
-                  </div>
-
-                  <div class="feature-item">
-                    <span class="f-icon">📸</span>
-                    <div>
-                      <strong>पत्ती रोग निदान (Gemini Vision)</strong>
-                      <p>प्रभावित पत्ती की फोटो भेजें और तत्काल जैविक उपचार पाएं।</p>
-                    </div>
-                  </div>
-
-                  <div class="feature-item">
-                    <span class="f-icon">🏛️</span>
-                    <div>
-                      <strong>कृषि पंचायत (WarRoom)</strong>
-                      <p>महंगे केमिकल बनाम शीघ्र तुड़ाई पर 4 विशेषज्ञों का संतुलित निर्णय।</p>
-                    </div>
-                  </div>
-                </div>
+                नमस्ते रामेश्वर जी! मैं <strong>KisanZess</strong> हूँ — आपका बहुभाषी डिजिटल कृषि सलाहकार। 
+                <br><br>
+                ⚡ <strong>30ms में मंडी भाव:</strong> अगरतला, इंदौर, या आज़ादपुर मंडी के ताज़ा दाम जानें।<br>
+                🌱 <strong>मृदा परीक्षण (ML):</strong> अपनी मिट्टी की N-P-K रिपोर्ट से सही फसल चुनें।<br>
+                📸 <strong>पत्ती रोग निदान (Gemini 1.5 Flash):</strong> रोगग्रस्त पत्ती की फोटो भेजें या ड्रैग करें।<br>
+                🏛️ <strong>कृषि पंचायत:</strong> महंगे कीटनाशक बनाम तुड़ाई के व्यापारिक निर्णय पर 4 विशेषज्ञों की राय लें।
               </div>
             </div>
           </div>
 
-          <!-- Bottom Prompt Dock & Suggestion Chips -->
-          <div class="chat-input-wrapper">
-            
-            <!-- Sleek Single-Row Suggestion Chips -->
-            <div class="quick-chips-bar">
-              <span class="chips-label">त्वरित प्रश्न:</span>
-              <div class="chips-scroll-container">
-                <button class="chip-btn" data-query="अगरतला मंडी में आज टमाटर और प्याज का क्या भाव चल रहा है?">📈 अगरतला मंडी भाव (15ms)</button>
-                <button class="chip-btn" data-query="Soil test report: N=90, P=42, K=43, pH=6.5, rainfall=180mm. Which crop gives best yield?">🌱 Soil NPK (ML)</button>
-                <button class="chip-btn" data-query="दुकानदार ₹2,800 का जहरीला केमिकल टॉनिक बेच रहा है। क्या मैं खरीदूँ या कोई सस्ता जैविक उपाय है?">🚨 ₹2,800 दवा vs जैविक बचत</button>
-                <button class="chip-btn" data-query="धान की फसल में यूरिया और डीएपी कितना डालें? मिट्टी में नाइट्रोजन 40 है।">🧪 खाद की खुराक (Fertilizer)</button>
-                <button class="chip-btn" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह झुलसा रोग है?">📸 पत्ती रोग (Gemini Vision)</button>
-                <button class="chip-btn" data-query="टमाटर में सफ़ेद मक्खी लग रही है और मंडी में भाव ₹3,800 क्विंटल है। क्या ₹1,800 की दवा डालें या तुड़ाई करें?">🏛️ कृषि पंचायत बहस</button>
-              </div>
+          <!-- Bottom Input Bar & Categorized Chips -->
+          <div class="chat-input-bar">
+            <div class="quick-chips">
+              <button class="chip-btn" data-query="अगरतला मंडी में आज टमाटर और प्याज का क्या भाव चल रहा है?">📈 अगरतला मंडी भाव (15ms)</button>
+              <button class="chip-btn" data-query="Soil test report: N=90, P=42, K=43, pH=6.5, rainfall=180mm. Which crop gives best yield?">🌱 Soil NPK (ML)</button>
+              <button class="chip-btn" data-query="धान की फसल में यूरिया और डीएपी कितना डालें? मिट्टी में नाइट्रोजन 40 है।">🧪 खाद की खुराक (Fertilizer)</button>
+              <button class="chip-btn" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह झुलसा रोग है?">📸 पत्ती रोग (Gemini Vision)</button>
+              <button class="chip-btn" data-query="टमाटर में सफ़ेद मक्खी लग रही है और मंडी में भाव ₹3,800 क्विंटल है। क्या ₹1,800 की महंगी कीटनाशक दवा डालें या जल्दी तुड़ाई करके बेचें?">🏛️ कृषि पंचायत बहस</button>
             </div>
-
-            <!-- Modern Airy Input Form Dock -->
             <form id="chat-form" class="input-form">
-              <label for="leaf-upload" class="btn-attach" title="Upload Leaf Photo for Gemini Vision">
-                <span class="attach-icon">📸</span>
+              <label for="leaf-upload" class="btn-attach" title="Upload Leaf Photo for Google Gemini Vision">
+                📸
                 <input type="file" id="leaf-upload" accept="image/*" style="display:none">
               </label>
-
               <input 
                 type="text" 
                 id="user-input" 
                 class="text-input" 
-                placeholder="अपनी भाषा में पूछें (उदा. 'इंदौर में सोयाबीन का भाव क्या है?' या 'यूरिया की सही मात्रा')..." 
+                placeholder="अपनी भाषा में पूछें (जैसे: इंदौर मंडी में सोयाबीन का भाव क्या है?)..." 
                 autocomplete="off"
               >
-
               <button type="submit" id="btn-send" class="btn-send" aria-label="Send message">
-                <span>भेजें</span>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                <span>Send</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
               </button>
             </form>
           </div>
-
         </section>
 
-        <!-- Right Column: Clean, Consolidated Telemetry Sidebar -->
-        <aside class="telemetry-section" id="telemetry-sidebar" aria-label="Real-time Metrics & Trace">
-          
-          <!-- Consolidated Card 1: Farmer Savings & ROI Dashboard -->
-          <div class="glass-card telemetry-card">
-            <div class="telemetry-card-header">
-              <div class="card-title-group">
-                <span class="card-icon">💰</span>
-                <h3>किसान बचत एवं परफॉरमेंस</h3>
-              </div>
-              <button id="btn-refresh-telemetry" class="icon-btn-subtle" title="Refresh metrics">⟳</button>
+        <!-- Right Column: Clean Telemetry & Insights Panel -->
+        <section class="telemetry-section glass-card" aria-label="Real-time Metrics">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="icon">📊</span>
+              <h2>Dual-Brain Insights & ROI</h2>
             </div>
+            <button id="btn-refresh-telemetry" class="icon-btn" title="Refresh metrics">⟳</button>
+          </div>
 
-            <!-- Hero Wealth Highlight Banner -->
-            <div class="wealth-highlight-box">
-              <div class="wealth-stat-hero">
-                <span class="wealth-hero-number" id="wealth-saved">₹3,820</span>
-                <span class="wealth-hero-label">बचाई गई औसत लागत / एकड़</span>
-              </div>
-              <div class="wealth-stat-sub">
-                <span class="wealth-sub-number text-accent" id="wealth-arbitrage">▲ +₹550</span>
-                <span class="wealth-sub-label">मंडी आर्बिट्राज लाभ</span>
+          <!-- Kisan Wealth & ROI Protector (किसान बचत मीटर) -->
+          <div class="farmer-wealth-card glass-subcard">
+            <div class="wealth-header">
+              <span class="wealth-icon">💰</span>
+              <div>
+                <h3 class="wealth-title">किसान बचत एवं सुरक्षा मीटर</h3>
+                <p class="wealth-subtitle">Laya Dual-Brain द्वारा रोकी गई प्रत्यक्ष फिजूलखर्ची</p>
               </div>
             </div>
-
-            <!-- Clean 2x2 Metric Grid -->
-            <div class="kpi-grid">
-              <div class="kpi-card">
-                <div class="kpi-label">Reflex Speedup</div>
-                <div class="kpi-value text-accent" id="metric-speedup">68.4x</div>
-                <div class="kpi-subtext">33ms vs 2,840ms LLM</div>
+            <div class="wealth-metrics-grid">
+              <div class="wealth-stat">
+                <span class="wealth-number text-green" id="wealth-saved">₹3,820</span>
+                <span class="wealth-desc">बचाई गई औसत लागत / एकड़</span>
               </div>
-              <div class="kpi-card">
-                <div class="kpi-label">Cost Reduction</div>
-                <div class="kpi-value text-green" id="metric-savings">97.3%</div>
-                <div class="kpi-subtext">$0.000 vs $0.015 / turn</div>
+              <div class="wealth-stat">
+                <span class="wealth-number text-accent" id="wealth-arbitrage">▲ +₹550</span>
+                <span class="wealth-desc">मंडी आर्बिट्राज अतिरिक्त लाभ</span>
               </div>
-              <div class="kpi-card">
-                <div class="kpi-label">System 1 Ratio</div>
-                <div class="kpi-value text-cyan" id="metric-s1-ratio">75%</div>
-                <div class="kpi-subtext">Edge Mandi & Soil ML</div>
-              </div>
-              <div class="kpi-card">
-                <div class="kpi-label">Memory Vault</div>
-                <div class="kpi-value text-purple" id="metric-memory">100%</div>
-                <div class="kpi-subtext">Zero Farmer Amnesia</div>
+              <div class="wealth-stat">
+                <span class="wealth-number text-cyan" id="wealth-latency">&lt; 35ms</span>
+                <span class="wealth-desc">ऑफ़लाइन रिफ्लेक्स गति</span>
               </div>
             </div>
           </div>
 
-          <!-- Consolidated Card 2: Latency Benchmark & Live Decision Trace -->
-          <div class="glass-card telemetry-card">
-            <div class="telemetry-card-header">
-              <div class="card-title-group">
-                <span class="card-icon">⚡</span>
-                <h3>Latency & Decision Trace</h3>
+          <!-- Consolidated KPI Grid -->
+          <div class="kpi-grid">
+            <div class="kpi-card glass-subcard">
+              <div class="kpi-label">Reflex Speedup</div>
+              <div class="kpi-value text-accent" id="metric-speedup">68.4x</div>
+              <div class="kpi-subtext">33ms vs 2,840ms LLM</div>
+            </div>
+            <div class="kpi-card glass-subcard">
+              <div class="kpi-label">Cost Reduction</div>
+              <div class="kpi-value text-green" id="metric-savings">97.3%</div>
+              <div class="kpi-subtext">$0.000 vs $0.015 / turn</div>
+            </div>
+            <div class="kpi-card glass-subcard">
+              <div class="kpi-label">System 1 Ratio</div>
+              <div class="kpi-value text-cyan" id="metric-s1-ratio">75%</div>
+              <div class="kpi-subtext">Edge Mandi & Soil ML</div>
+            </div>
+            <div class="kpi-card glass-subcard">
+              <div class="kpi-label">Memory Vault</div>
+              <div class="kpi-value text-purple" id="metric-memory">100%</div>
+              <div class="kpi-subtext">Zero Farmer Amnesia</div>
+            </div>
+          </div>
+
+          <!-- Architecture Latency Comparison Bars -->
+          <div class="benchmark-comparison-panel glass-subcard">
+            <h3 class="panel-subtitle">Latency Benchmark Comparison</h3>
+            
+            <div class="bar-row">
+              <div class="bar-label-group">
+                <span class="bar-title font-bold text-accent">KisanZess Reflex (System 1)</span>
+                <span class="bar-value text-accent" id="bar-val-reflex">33 ms</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill reflex-fill" style="width: 2%;"></div>
               </div>
             </div>
 
-            <!-- Sleek Latency Comparison Bars -->
-            <div class="benchmark-bars-wrapper">
-              <div class="bar-row">
-                <div class="bar-label-group">
-                  <span class="bar-title text-accent">KisanZess Reflex (S1)</span>
-                  <span class="bar-value text-accent" id="bar-val-reflex">33 ms</span>
-                </div>
-                <div class="bar-track">
-                  <div class="bar-fill reflex-fill" style="width: 3%;"></div>
-                </div>
+            <div class="bar-row">
+              <div class="bar-label-group">
+                <span class="bar-title">Farmer.Chat / Kisan e-Mitra</span>
+                <span class="bar-value">2,840 ms</span>
               </div>
-
-              <div class="bar-row">
-                <div class="bar-label-group">
-                  <span class="bar-title">Kisan e-Mitra / Chat</span>
-                  <span class="bar-value">2,840 ms</span>
-                </div>
-                <div class="bar-track">
-                  <div class="bar-fill hermes-fill" style="width: 78%;"></div>
-                </div>
+              <div class="bar-track">
+                <div class="bar-fill hermes-fill" style="width: 78%;"></div>
               </div>
             </div>
 
-            <!-- Live Trace Feed -->
-            <div class="trace-feed-wrapper">
-              <div class="trace-feed-title">Live Step Trace:</div>
-              <div id="step-trace-log" class="trace-log-list">
-                <div class="trace-item s1-trace">
-                  <div class="trace-dot"></div>
-                  <div class="trace-content">
-                    <span class="trace-badge">⚡ System 1</span>
-                    <span class="trace-text">Ready for vernacular query</span>
-                  </div>
-                </div>
+            <div class="bar-row">
+              <div class="bar-label-group">
+                <span class="bar-title">Cloud Multimodal LLM</span>
+                <span class="bar-value">3,650 ms</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill openclaw-fill" style="width: 100%;"></div>
               </div>
             </div>
           </div>
 
-        </aside>
-
+          <!-- Live Step Trace Log -->
+          <div class="live-trace-panel glass-subcard">
+            <h3 class="panel-subtitle">Live Decision Trace</h3>
+            <div id="step-trace-log" class="trace-log-list">
+              <div class="trace-item s1-trace">
+                <div class="trace-dot"></div>
+                <div class="trace-content">
+                  <span class="trace-badge">⚡ System 1</span>
+                  <span class="trace-text">Ready for vernacular query</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
-    <!-- ====================================================================
-         Tab 2: Soil NPK & Satellite Earth Map (l-data-seT---ML)
-         ==================================================================== -->
+    <!-- Tab 2: Soil NPK & Satellite Earth Map (from l-data-seT---ML) -->
     <div id="tab-soil-ml" class="tab-pane">
       <div class="soil-studio-grid">
-        
-        <!-- Left: Soil & Fertilizer Form -->
+        <!-- Left: Sliders Form Card -->
         <section class="glass-card soil-inputs-card">
           <div class="card-header">
             <div class="card-title-group">
               <span class="icon">🧪</span>
-              <h2>Empirical Soil & Climate Inputs (ML Core)</h2>
+              <h2>Empirical Soil & Climate Inputs (l-data-seT---ML)</h2>
             </div>
-            <div class="ml-subtoggle-group">
-              <button type="button" id="subtab-crop-btn" class="subtab-btn active">🌱 Crop ML</button>
-              <button type="button" id="subtab-fert-btn" class="subtab-btn">🧪 Fertilizer ML</button>
+            <div class="ml-subtoggle-group" style="display: flex; gap: 6px;">
+              <button type="button" id="subtab-crop-btn" class="nav-tab active" style="padding: 4px 12px; font-size: 11px;">🌱 Crop ML</button>
+              <button type="button" id="subtab-fert-btn" class="nav-tab" style="padding: 4px 12px; font-size: 11px;">🧪 Fertilizer ML</button>
             </div>
           </div>
           <p class="section-desc">Adjust soil parameters or click any regional hub on the satellite map to auto-fill agro-climatic values.</p>
@@ -387,7 +346,7 @@
             </button>
           </form>
 
-          <!-- Dedicated Fertilizer Form -->
+          <!-- Dedicated Fertilizer Form (Shown when Fertilizer subtab clicked) -->
           <form id="fert-ml-form" class="soil-form-grid" style="display: none;">
             <div class="slider-group">
               <div class="slider-header">
@@ -470,7 +429,7 @@
               <span class="icon">🛰️</span>
               <h2>Earth Observation & APMC Mandi Network</h2>
             </div>
-            <div class="map-layer-selector">
+            <div class="map-layer-selector" style="display: flex; gap: 6px;">
               <button type="button" class="layer-btn active" id="layer-btn-sat">🛰️ Satellite</button>
               <button type="button" class="layer-btn" id="layer-btn-ndvi">🌿 NDVI</button>
               <button type="button" class="layer-btn" id="layer-btn-ndwi">💧 NDWI</button>
@@ -493,43 +452,44 @@
           </div>
 
           <!-- Selected Hub Telemetry Card -->
-          <div id="selected-hub-telemetry" class="selected-hub-card" style="display: none;">
-            <div class="hub-header">
-              <h4 id="telemetry-hub-name">📍 Hub Details</h4>
-              <span id="telemetry-agro-zone" class="agro-zone-badge">Zone</span>
+          <div id="selected-hub-telemetry" class="glass-subcard" style="margin-top: 14px; display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 id="telemetry-hub-name" style="font-size: 14px; font-weight: 700; color: var(--accent-gold);">📍 Hub Details</h4>
+              <span id="telemetry-agro-zone" style="font-size: 11px; color: var(--accent-primary); font-weight: 700; background: rgba(16,185,129,0.2); padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border-accent);">Zone</span>
             </div>
-            <div class="hub-metrics-row">
-              <div class="hub-stat">
-                <span class="hub-stat-label">Vegetation (NDVI)</span>
-                <strong id="telemetry-ndvi" class="hub-stat-val text-green">0.65</strong>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; font-size: 12px;">
+              <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                <span style="color: var(--text-muted); font-size: 10px; display: block;">Vegetation (NDVI)</span>
+                <strong id="telemetry-ndvi" style="color: var(--accent-primary); font-size: 15px;">0.65</strong>
               </div>
-              <div class="hub-stat">
-                <span class="hub-stat-label">Canopy Moisture (NDWI)</span>
-                <strong id="telemetry-ndwi" class="hub-stat-val text-cyan">0.38</strong>
+              <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                <span style="color: var(--text-muted); font-size: 10px; display: block;">Canopy Moisture (NDWI)</span>
+                <strong id="telemetry-ndwi" style="color: var(--accent-cyan); font-size: 15px;">0.38</strong>
               </div>
-              <div class="hub-stat">
-                <span class="hub-stat-label">Sowing Stage</span>
-                <strong id="telemetry-sowing" class="hub-stat-val text-accent">Active</strong>
+              <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                <span style="color: var(--text-muted); font-size: 10px; display: block;">Sowing Stage</span>
+                <strong id="telemetry-sowing" style="color: var(--accent-gold); font-size: 11px;">Active</strong>
               </div>
             </div>
-            <div id="telemetry-kvk" class="hub-kvk-alert"></div>
+            <div id="telemetry-kvk" style="font-size: 12px; color: var(--text-secondary); background: rgba(16,185,129,0.1); border-left: 3px solid var(--accent-primary); padding: 8px 12px; border-radius: 4px; line-height: 1.4;">
+            </div>
           </div>
         </section>
       </div>
 
-      <!-- Scientific ML Benchmarks -->
-      <section class="glass-card mt-6">
-        <div class="card-header">
+      <!-- Empirical Scientific ML Benchmarks & Model Explainability (from l-data-seT---ML) -->
+      <section class="glass-card mt-6" style="margin-top: 24px; padding: 20px;">
+        <div class="card-header" style="padding-left: 0; padding-right: 0;">
           <div class="card-title-group">
             <span class="icon">🔬</span>
-            <h2>Scientific ML Explainability & Model Benchmarks (l-data-seT---ML)</h2>
+            <h2>Scientific ML Explainability & Model Benchmarks (l-data-seT---ML Core)</h2>
           </div>
           <span class="status-badge green">99.1% Random Forest Accuracy</span>
         </div>
         <p class="section-desc">Empirical evaluations on 2,200+ Indian soil samples across 22 crops and 7 fertilizer classes. Validated against Decision Tree and KNN baselines.</p>
 
         <div class="charts-gallery-grid">
-          <div class="chart-card">
+          <div class="chart-card glass-subcard">
             <div class="chart-header">
               <span class="chart-badge">Feature Importance</span>
               <h4>RF Crop Feature Weights</h4>
@@ -538,7 +498,7 @@
             <p class="chart-caption">Rainfall, Humidity, and Potassium rank highest in crop discriminant power.</p>
           </div>
 
-          <div class="chart-card">
+          <div class="chart-card glass-subcard">
             <div class="chart-header">
               <span class="chart-badge">Confusion Matrix</span>
               <h4>Random Forest 22-Crop Matrix</h4>
@@ -547,7 +507,7 @@
             <p class="chart-caption">99.1% test set accuracy with minimal misclassifications.</p>
           </div>
 
-          <div class="chart-card">
+          <div class="chart-card glass-subcard">
             <div class="chart-header">
               <span class="chart-badge">Correlation Heatmap</span>
               <h4>Nutrient Synergy Matrix</h4>
@@ -556,7 +516,7 @@
             <p class="chart-caption">Empirical inter-nutrient correlations across N-P-K, pH, and soil moisture.</p>
           </div>
 
-          <div class="chart-card">
+          <div class="chart-card glass-subcard">
             <div class="chart-header">
               <span class="chart-badge">Fertilizer Schedule</span>
               <h4>Deficit Prescription Matrix</h4>
@@ -568,9 +528,7 @@
       </section>
     </div>
 
-    <!-- ====================================================================
-         Tab 3: Krishi Panchayat WarRoom
-         ==================================================================== -->
+    <!-- Tab 3: Krishi Panchayat WarRoom -->
     <div id="tab-panchayat" class="tab-pane">
       <section class="glass-card panchayat-wrapper">
         <div class="card-header">
@@ -584,7 +542,7 @@
 
         <div class="panchayat-cards-grid">
           <!-- Agent 1: Dr Krishi -->
-          <div class="panchayat-agent-card">
+          <div class="panchayat-agent-card glass-subcard">
             <div class="agent-avatar">🌿</div>
             <h3 class="agent-name">Dr. Krishi (डॉ. कृषि)</h3>
             <span class="agent-role">Plant Pathologist</span>
@@ -594,7 +552,7 @@
           </div>
 
           <!-- Agent 2: Mandi Vyapari -->
-          <div class="panchayat-agent-card">
+          <div class="panchayat-agent-card glass-subcard">
             <div class="agent-avatar">💰</div>
             <h3 class="agent-name">Mandi Vyapari (मंडी व्यापारी)</h3>
             <span class="agent-role">APMC Market Economist</span>
@@ -604,7 +562,7 @@
           </div>
 
           <!-- Agent 3: Mitti Mitra -->
-          <div class="panchayat-agent-card">
+          <div class="panchayat-agent-card glass-subcard">
             <div class="agent-avatar">🧪</div>
             <h3 class="agent-name">Mitti Mitra (मिट्टी मित्र)</h3>
             <span class="agent-role">Soil & Organic Ecologist</span>
@@ -615,7 +573,7 @@
         </div>
 
         <!-- Sarpanch Consensus Box -->
-        <div class="sarpanch-consensus-box mt-6">
+        <div class="sarpanch-consensus-box glass-subcard mt-6">
           <div class="sarpanch-header">
             <div class="sarpanch-avatar">⚖️</div>
             <div>
@@ -635,9 +593,7 @@
       </section>
     </div>
 
-    <!-- ====================================================================
-         Tab 4: Khet-Vault (FARM_MEMORY.md)
-         ==================================================================== -->
+    <!-- Tab 4: Khet-Vault (FARM_MEMORY.md) -->
     <div id="tab-memory" class="tab-pane">
       <section class="glass-card memory-wrapper">
         <div class="card-header">
@@ -649,12 +605,11 @@
         </div>
         <p class="section-desc">Human-readable, persistent markdown state maintaining zero farmer amnesia across cropping seasons. Fully auditable by agronomists and village sarpanches.</p>
 
-        <div class="memory-code-box">
+        <div class="memory-code-box glass-subcard">
           <pre id="memory-md-content"><code>Loading FARM_MEMORY.md...</code></pre>
         </div>
       </section>
     </div>
-
   </div>
 
   <script src="/static/app.js"></script>
