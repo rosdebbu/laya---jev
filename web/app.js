@@ -50,8 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Real-Life Farmer Crisis Solvers
-  document.querySelectorAll(".crisis-btn").forEach((btn) => {
+  // Real-Life Farmer Crisis Solvers & Quick Chips
+  document.querySelectorAll(".crisis-btn, .crisis-chip").forEach((btn) => {
     btn.addEventListener("click", () => {
       const q = btn.getAttribute("data-query");
       userInput.value = q;
@@ -65,6 +65,18 @@ document.addEventListener("DOMContentLoaded", () => {
     btnFieldMode.addEventListener("click", () => {
       const isField = document.body.classList.toggle("field-mode");
       btnFieldMode.innerHTML = isField ? "<span>🌙 Dark Matrix</span>" : "<span>☀️ Field Mode</span>";
+    });
+  }
+
+  // Sidebar Toggle (Full Width Chat vs Split View)
+  const btnToggleSidebar = document.getElementById("btn-toggle-sidebar");
+  const mainDashboardGrid = document.getElementById("main-dashboard-grid");
+  if (btnToggleSidebar && mainDashboardGrid) {
+    btnToggleSidebar.addEventListener("click", () => {
+      const isCollapsed = mainDashboardGrid.classList.toggle("sidebar-collapsed");
+      btnToggleSidebar.innerHTML = isCollapsed 
+        ? '<span class="toggle-icon">👁️</span><span class="toggle-text">Show Telemetry</span>' 
+        : '<span class="toggle-icon">📊</span><span class="toggle-text">Telemetry</span>';
     });
   }
 

@@ -80,9 +80,61 @@ MANDI_PRICE_REGISTRY = {
     }
 }
 
+from functools import lru_cache
+
+CROP_ALIASES = {
+    "टमाटर": "tomato",
+    "tomato": "tomato",
+    "गेहूं": "wheat",
+    "गेंहू": "wheat",
+    "wheat": "wheat",
+    "धान": "paddy",
+    "चावल": "paddy",
+    "rice": "paddy",
+    "paddy": "paddy",
+    "प्याज": "onion",
+    "प्याज़": "onion",
+    "onion": "onion",
+    "आलू": "potato",
+    "potato": "potato",
+    "कपास": "cotton",
+    "cotton": "cotton",
+    "मक्का": "maize",
+    "maize": "maize",
+    "corn": "maize",
+    "सोयाबीन": "soybean",
+    "soybean": "soybean",
+}
+
+@lru_cache(maxsize=512)
+def get_cached_mandi_data(crop_clean: str, chosen_market: str) -> Dict[str, Any]:
+    matched_crop = CROP_ALIASES.get(crop_clean)
+    if not matched_crop:
+        for key in MANDI_PRICE_REGISTRY.keys():
+            if key in crop_clean or crop_clean in key:
+                matched_crop = key
+                break
+    if not matched_crop:
+        matched_crop = "paddy"
+
+    info = MANDI_PRICE_REGISTRY.get(matched_crop, MANDI_PRICE_REGISTRY["paddy"])
+    return {
+        "crop": matched_crop.capitalize(),
+        "query_district": chosen_market,
+        "market_name": info["market"],
+        "modal_price": f"₹{info['modal_price']:,} / Quintal",
+        "price_range": f"₹{info['min_price']:,} - ₹{info['max_price']:,}",
+        "trend": info["trend"],
+        "msp_status": info["msp_status"],
+        "recommendation": (
+            f"Prices for {matched_crop.capitalize()} are {info['trend'].lower()}. "
+            f"Nearest active market is {info['market']} at modal rate ₹{info['modal_price']:,}."
+        )
+    }
+
 class MandiPriceTool(BaseTool):
     """
-    Sub-15ms deterministic APMC mandi price retrieval tool for Indian farmers.
+    Sub-5ms deterministic APMC mandi price retrieval tool for Indian farmers.
     """
     name: str = "mandi_price"
     description: str = "Get current day APMC market price, trends, and MSP status for Indian agricultural crops."
@@ -98,25 +150,6 @@ class MandiPriceTool(BaseTool):
         chosen_crop = crop or commodity or "paddy"
         chosen_market = district or market or "Nearest APMC Mandi"
         crop_clean = chosen_crop.lower().strip()
-        # Fuzzy match common crop variations
-        matched_crop = "paddy"
-        for key in MANDI_PRICE_REGISTRY.keys():
-            if key in crop_clean or crop_clean in key:
-                matched_crop = key
-                break
         
-        info = MANDI_PRICE_REGISTRY.get(matched_crop, MANDI_PRICE_REGISTRY["paddy"])
-        res_data = {
-            "crop": matched_crop.capitalize(),
-            "query_district": chosen_market,
-            "market_name": info["market"],
-            "modal_price": f"₹{info['modal_price']:,} / Quintal",
-            "price_range": f"₹{info['min_price']:,} - ₹{info['max_price']:,}",
-            "trend": info["trend"],
-            "msp_status": info["msp_status"],
-            "recommendation": (
-                f"Prices for {matched_crop.capitalize()} are {info['trend'].lower()}. "
-                f"Nearest active market is {info['market']} at modal rate ₹{info['modal_price']:,}."
-            )
-        }
+        res_data = get_cached_mandi_data(crop_clean, chosen_market)
         return ToolResult(success=True, output=res_data)

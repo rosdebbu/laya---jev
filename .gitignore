@@ -1,0 +1,22 @@
+# Python & Virtualenv
+__pycache__/
+*.py[cod]
+*$py.class
+*.pkl
+.crop_model_cache.pkl
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Environment & IDE
+.env
+.venv/
+env/
+venv/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

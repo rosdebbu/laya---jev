@@ -1,0 +1,60 @@
+{
+  "profiles": {
+    "farmer_001": {
+      "farmer_id": "farmer_001",
+      "name": "Rameshwar Patel (रामेश्वर पटेल)",
+      "phone": "",
+      "district": "Indore",
+      "state": "Madhya Pradesh",
+      "land_acres": 4.0,
+      "soil_type": "Black",
+      "soil_ph": 7.1,
+      "irrigation_source": "Tube well & Canal",
+      "preferred_mandi": "Indore APMC",
+      "current_crops": [
+        "Soybean",
+        "Cotton"
+      ],
+      "disease_history": [
+        {
+          "date": "2025-08-15",
+          "crop": "Soybean",
+          "diagnosis": "Yellow Mosaic Virus",
+          "treatment": "Thiamethoxam 25% WG + Yellow Sticky Traps",
+          "status": "Resolved"
+        },
+        {
+          "date": "2026-09-26",
+          "crop": "soybean",
+          "diagnosis": "Nutrient Chlorosis & Sucking Pest Infestation",
+          "treatment": "Imidacloprid 17.8% SL @ 0.5ml/liter water.",
+          "status": "Under Treatment"
+        },
+        {
+          "date": "2026-09-26",
+          "crop": "soybean",
+          "diagnosis": "Nutrient Chlorosis & Sucking Pest Infestation",
+          "treatment": "Imidacloprid 17.8% SL @ 0.5ml/liter water.",
+          "status": "Under Treatment"
+        },
+        {
+          "date": "2026-09-26",
+          "crop": "soybean",
+          "diagnosis": "Nutrient Chlorosis & Sucking Pest Infestation",
+          "treatment": "Imidacloprid 17.8% SL @ 0.5ml/liter water.",
+          "status": "Under Treatment"
+        },
+        {
+          "date": "2026-09-26",
+          "crop": "soybean",
+          "diagnosis": "Nutrient Chlorosis & Sucking Pest Infestation",
+          "treatment": "Imidacloprid 17.8% SL @ 0.5ml/liter water.",
+          "status": "Under Treatment"
+        }
+      ],
+      "created_at": "2026-09-26T23:26:15.716736",
+      "last_active": "2026-09-26T23:28:28.249975"
+    }
+  },
+  "interactions": {}
+}

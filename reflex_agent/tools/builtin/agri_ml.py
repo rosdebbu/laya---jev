@@ -18,7 +18,9 @@ _CROP_CLASSES = None
 def _get_dataset_path(filename: str) -> Optional[str]:
     """Find dataset across local workspace locations."""
     candidates = [
-        os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "l-data-seT---ML", "data", filename),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "Precision-AgTech-Dual-Stage-Crop-Soil-Nutrient-Deficit-Advisor-for-Sustainable-Agriculture", "data", filename)),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "l-data-seT---ML", "data", filename)),
+        os.path.join("..", "Precision-AgTech-Dual-Stage-Crop-Soil-Nutrient-Deficit-Advisor-for-Sustainable-Agriculture", "data", filename),
         os.path.join("..", "l-data-seT---ML", "data", filename),
         os.path.join("data", filename),
         os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", filename)),
@@ -29,10 +31,20 @@ def _get_dataset_path(filename: str) -> Optional[str]:
     return None
 
 def _load_crop_model():
-    """Train/cache high-speed RandomForest on Crop_recommendation.csv."""
+    """Load cached model or train/cache high-speed RandomForest on Crop_recommendation.csv."""
     global _CROP_MODEL, _CROP_SCALER, _CROP_CLASSES
     if _CROP_MODEL is not None:
         return _CROP_MODEL, _CROP_SCALER, _CROP_CLASSES
+
+    import pickle
+    cache_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".crop_model_cache.pkl"))
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, "rb") as f:
+                _CROP_MODEL, _CROP_SCALER, _CROP_CLASSES = pickle.load(f)
+            return _CROP_MODEL, _CROP_SCALER, _CROP_CLASSES
+        except Exception:
+            pass
 
     import pandas as pd
     from sklearn.ensemble import RandomForestClassifier
@@ -50,12 +62,19 @@ def _load_crop_model():
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    model = RandomForestClassifier(n_estimators=50, random_state=42, n_jobs=-1)
+    model = RandomForestClassifier(n_estimators=30, random_state=42, n_jobs=-1)
     model.fit(X_scaled, y)
 
     _CROP_MODEL = model
     _CROP_SCALER = scaler
     _CROP_CLASSES = list(model.classes_)
+
+    try:
+        with open(cache_path, "wb") as f:
+            pickle.dump((_CROP_MODEL, _CROP_SCALER, _CROP_CLASSES), f)
+    except Exception:
+        pass
+
     return _CROP_MODEL, _CROP_SCALER, _CROP_CLASSES
 
 
@@ -66,6 +85,13 @@ class SoilCropRecommendationTool(BaseTool):
     """
     name: str = "crop_recommendation"
     description: str = "Predict top-3 suitable crops based on soil Nitrogen (N), Phosphorus (P), Potassium (K), pH, and climate."
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        try:
+            _load_crop_model()
+        except Exception:
+            pass
 
     def execute(
         self,

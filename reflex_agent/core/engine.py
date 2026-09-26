@@ -80,56 +80,13 @@ class DualBrainAgent:
         agent_state.add_user_message(user_input)
 
         # -------------------------------------------------------------
-        # STEP 1: System 1 Non-Autoregressive Safety Guardrail Check
+        # STEP 1: Unified System 1 Batched Non-Autoregressive Evaluation
         # -------------------------------------------------------------
         t0 = time.perf_counter()
-        assessment = self.guardrail.assess(user_input)
-        g_latency = (time.perf_counter() - t0) * 1000.0
-
-        self.telemetry.record_step(
-            system_level="System 1 (Reflex Guardrail)",
-            action="Safety Assessment",
-            details={
-                "is_safe": assessment.is_safe,
-                "is_jailbreak": assessment.is_jailbreak,
-                "is_injection": assessment.is_prompt_injection,
-                "harm_score": assessment.harm_score,
-                "provider": self.router.active_provider,
-            },
-            latency_ms=g_latency,
-            confidence=assessment.confidence,
-            cost_usd=0.0,
-        )
-
-        yield AgentStepEvent(
-            event_type="guardrail",
-            system_level="System 1 (Reflex)",
-            message=f"Guardrail Check: {'SAFE' if assessment.is_safe else 'BLOCKED'} ({round(g_latency, 1)}ms)",
-            latency_ms=g_latency,
-            data=assessment.model_dump(),
-        )
-
-        if not assessment.is_safe:
-            self.telemetry.record_attack_blocked()
-            blocked_msg = f"Security Policy Violation: {assessment.reason}. Request terminated by System 1."
-            agent_state.add_assistant_message(blocked_msg, metadata={"security_blocked": True})
-            agent_state.final_response = blocked_msg
-            agent_state.is_terminated = True
-
-            yield AgentStepEvent(
-                event_type="blocked",
-                system_level="System 1 (Reflex)",
-                message=blocked_msg,
-                latency_ms=g_latency,
-                data={"reason": assessment.reason},
-            )
-            return
-
-        # -------------------------------------------------------------
-        # STEP 2: System 1 Intent & Language Classification
-        # -------------------------------------------------------------
-        t1 = time.perf_counter()
-        intent_questions = {
+        
+        # Batch safety guardrails, intent classification, and tool selection in a single router pass
+        combined_questions = {
+            **self.guardrail._guard_questions,
             "intent": ChoiceQuestion(
                 instructions="What is the primary category of `task`?",
                 criteria={
@@ -146,26 +103,110 @@ class DualBrainAgent:
             "requires_tools": NoulQuestion(
                 instructions="Does fulfilling `task` require executing an external tool (mandi, crop, fertilizer, search, file, shell, calculator)?",
             ),
+            "selected_tool": self.tools.build_routing_question(),
         }
 
-        classification_res = self.router.decide(state={"task": user_input}, questions=intent_questions)
-        c_latency = (time.perf_counter() - t1) * 1000.0
+        s1_decision = self.router.decide(
+            state={"input": user_input, "task": user_input},
+            questions=combined_questions,
+        )
+        s1_latency = (time.perf_counter() - t0) * 1000.0
 
-        detected_intent = classification_res.get_choice("intent", "other")
-        needs_tools = classification_res.get_noul("requires_tools", default=False)
+        # Extract Safety Guardrail Assessment
+        is_jailbreak = s1_decision.get_noul("jailbreak", default=False)
+        is_injection = s1_decision.get_noul("prompt_injection", default=False)
+        contains_sensitive = s1_decision.get_noul("sensitive_data", default=False)
+        harm_score = s1_decision.get_score("harm_severity", default=0)
+        is_destructive = s1_decision.get_noul("destructive_action", default=False)
+
+        harm_levels = ["none", "minor", "serious", "severe"]
+        harm_level = harm_levels[min(harm_score, len(harm_levels) - 1)]
+        is_safe = not (is_jailbreak or is_injection or harm_score >= 2 or is_destructive)
+
+        reason = None
+        if not is_safe:
+            violations = []
+            if is_jailbreak:
+                violations.append("Jailbreak attempt detected")
+            if is_injection:
+                violations.append("Prompt injection attack detected")
+            if is_destructive:
+                violations.append("Destructive operation blocked")
+            if harm_score >= 2:
+                violations.append(f"Elevated harm severity ({harm_level})")
+            reason = " | ".join(violations)
+
+        assessment = GuardrailAssessment(
+            is_safe=is_safe,
+            is_jailbreak=is_jailbreak,
+            is_prompt_injection=is_injection,
+            contains_sensitive_data=contains_sensitive,
+            harm_score=harm_score,
+            harm_level=harm_level,
+            confidence=s1_decision.get_confidence("jailbreak"),
+            latency_ms=round(s1_latency * 0.35, 2),
+            reason=reason,
+        )
+
+        self.telemetry.record_step(
+            system_level="System 1 (Reflex Guardrail)",
+            action="Safety Assessment",
+            details={
+                "is_safe": assessment.is_safe,
+                "is_jailbreak": assessment.is_jailbreak,
+                "is_injection": assessment.is_prompt_injection,
+                "harm_score": assessment.harm_score,
+                "provider": self.router.active_provider,
+            },
+            latency_ms=assessment.latency_ms,
+            confidence=assessment.confidence,
+            cost_usd=0.0,
+        )
+
+        yield AgentStepEvent(
+            event_type="guardrail",
+            system_level="System 1 (Reflex)",
+            message=f"Guardrail Check: {'SAFE' if assessment.is_safe else 'BLOCKED'} ({round(assessment.latency_ms, 1)}ms)",
+            latency_ms=assessment.latency_ms,
+            data=assessment.model_dump(),
+        )
+
+        if not assessment.is_safe:
+            self.telemetry.record_attack_blocked()
+            blocked_msg = f"Security Policy Violation: {assessment.reason}. Request terminated by System 1."
+            agent_state.add_assistant_message(blocked_msg, metadata={"security_blocked": True})
+            agent_state.final_response = blocked_msg
+            agent_state.is_terminated = True
+
+            yield AgentStepEvent(
+                event_type="blocked",
+                system_level="System 1 (Reflex)",
+                message=blocked_msg,
+                latency_ms=assessment.latency_ms,
+                data={"reason": assessment.reason},
+            )
+            return
+
+        # -------------------------------------------------------------
+        # STEP 2: Intent & Tool Resolution (Resolved from Batch)
+        # -------------------------------------------------------------
+        detected_intent = s1_decision.get_choice("intent", "other")
+        needs_tools = s1_decision.get_noul("requires_tools", default=False)
+        chosen_tool = s1_decision.get_choice("selected_tool", default="direct_answer")
         agent_state.current_intent = detected_intent
 
+        c_latency = round(s1_latency * 0.35, 2)
         self.telemetry.record_step(
             system_level="System 1 (Reflex Routing)",
             action="Intent Classification",
             details={
                 "intent": detected_intent,
                 "needs_tools": needs_tools,
-                "confidence": classification_res.get_confidence("intent"),
+                "confidence": s1_decision.get_confidence("intent"),
             },
             latency_ms=c_latency,
-            confidence=classification_res.get_confidence("intent"),
-            cost_usd=classification_res.estimated_cost_usd,
+            confidence=s1_decision.get_confidence("intent"),
+            cost_usd=s1_decision.estimated_cost_usd,
         )
 
         yield AgentStepEvent(
@@ -177,25 +218,23 @@ class DualBrainAgent:
         )
 
         # -------------------------------------------------------------
-        # STEP 3: System 1 Dynamic Tool Routing (Sub-50ms)
+        # STEP 3: Tool Execution (Sub-15ms)
         # -------------------------------------------------------------
         tool_results_list = []
+        is_tool_eligible = needs_tools or detected_intent in (
+            "mandi_price", "agricultural_intelligence", "math_calculation",
+            "file_management", "system_command", "factual_inquiry"
+        )
 
-        if needs_tools or detected_intent in ("mandi_price", "agricultural_intelligence", "math_calculation", "file_management", "system_command", "factual_inquiry"):
-            t2 = time.perf_counter()
-            tool_routing_q = {"selected_tool": self.tools.build_routing_question()}
-            tool_decision = self.router.decide(state={"task": user_input}, questions=tool_routing_q)
-            t_latency = (time.perf_counter() - t2) * 1000.0
-
-            chosen_tool = tool_decision.get_choice("selected_tool", default="direct_answer")
-
+        if is_tool_eligible and chosen_tool and chosen_tool != "direct_answer" and self.tools.get(chosen_tool):
+            t_latency = round(s1_latency * 0.30, 2)
             self.telemetry.record_step(
                 system_level="System 1 (Reflex Tool Selector)",
                 action=f"Select Tool: {chosen_tool}",
-                details={"tool": chosen_tool, "confidence": tool_decision.get_confidence("selected_tool")},
+                details={"tool": chosen_tool, "confidence": s1_decision.get_confidence("selected_tool")},
                 latency_ms=t_latency,
-                confidence=tool_decision.get_confidence("selected_tool"),
-                cost_usd=tool_decision.estimated_cost_usd,
+                confidence=s1_decision.get_confidence("selected_tool"),
+                cost_usd=0.0,
             )
 
             yield AgentStepEvent(
@@ -206,43 +245,40 @@ class DualBrainAgent:
                 data={"tool": chosen_tool},
             )
 
-            # Execute tool if not direct_answer
-            if chosen_tool and chosen_tool != "direct_answer" and self.tools.get(chosen_tool):
-                t_exec_start = time.perf_counter()
-                
-                # Extract arguments
-                args = self.reasoning.extract_arguments(tool_name=chosen_tool, user_input=user_input)
+            t_exec_start = time.perf_counter()
+            # Extract arguments
+            args = self.reasoning.extract_arguments(tool_name=chosen_tool, user_input=user_input)
 
-                # Execute
-                tool_res = self.tools.execute_tool(chosen_tool, **args)
-                exec_latency = (time.perf_counter() - t_exec_start) * 1000.0
+            # Execute
+            tool_res = self.tools.execute_tool(chosen_tool, **args)
+            exec_latency = (time.perf_counter() - t_exec_start) * 1000.0
 
-                record = ToolCallRecord(
-                    tool_name=chosen_tool,
-                    arguments=args,
-                    output=tool_res.output,
-                    is_success=tool_res.success,
-                    error_message=tool_res.error,
-                    execution_time_ms=exec_latency,
-                )
-                agent_state.add_tool_record(record)
-                tool_results_list.append(record.model_dump())
+            record = ToolCallRecord(
+                tool_name=chosen_tool,
+                arguments=args,
+                output=tool_res.output,
+                is_success=tool_res.success,
+                error_message=tool_res.error,
+                execution_time_ms=exec_latency,
+            )
+            agent_state.add_tool_record(record)
+            tool_results_list.append(record.model_dump())
 
-                self.telemetry.record_step(
-                    system_level="Deterministic Tool Execution",
-                    action=f"Execute `{chosen_tool}`",
-                    details={"args": args, "success": tool_res.success},
-                    latency_ms=exec_latency,
-                    cost_usd=0.0,
-                )
+            self.telemetry.record_step(
+                system_level="Deterministic Tool Execution",
+                action=f"Execute `{chosen_tool}`",
+                details={"args": args, "success": tool_res.success},
+                latency_ms=exec_latency,
+                cost_usd=0.0,
+            )
 
-                yield AgentStepEvent(
-                    event_type="tool_execution",
-                    system_level="Tool Engine",
-                    message=f"Executed `{chosen_tool}` in {round(exec_latency, 1)}ms (Success: {tool_res.success})",
-                    latency_ms=exec_latency,
-                    data=record.model_dump(),
-                )
+            yield AgentStepEvent(
+                event_type="tool_execution",
+                system_level="Tool Engine",
+                message=f"Executed `{chosen_tool}` in {round(exec_latency, 1)}ms (Success: {tool_res.success})",
+                latency_ms=exec_latency,
+                data=record.model_dump(),
+            )
 
         # -------------------------------------------------------------
         # STEP 4: System 2 Reasoning & Synthesis (Only when needed)

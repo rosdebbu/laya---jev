@@ -179,12 +179,20 @@ class ReasoningClient:
         user_input: str,
         tool_results: List[Dict[str, Any]],
         system_1_intent: Optional[str] = None,
+        force_llm: bool = False,
     ) -> str:
         """
         Synthesizes the final user-facing response.
-        If tool results are present, formats them clearly.
+        If tool results are present, formats them with sub-millisecond local templates,
+        or routes to low-latency LLM synthesis when complex reasoning is required.
         """
-        # If API key is present, use litellm
+        # High-performance Fast-Path: Deterministic tools do not require slow LLM overhead
+        if tool_results and not force_llm:
+            local_formatted = self._synthesize_local(user_input, tool_results, system_1_intent)
+            if local_formatted:
+                return local_formatted
+
+        # If API key is present, use litellm with fast timeout
         if self.has_api_key:
             try:
                 import litellm
@@ -200,12 +208,60 @@ class ReasoningClient:
                     model=self.model_name,
                     messages=messages,
                     temperature=0.3,
+                    timeout=3.5,
                 )
                 return res.choices[0].message.content.strip()
             except Exception as e:
-                logger.warning(f"LLM synthesis failed, using local reflex synthesizer: {e}")
+                logger.warning(f"LLM synthesis skipped/fallback ({e}), using local reflex synthesizer")
 
-        # High-performance local synthesis (Zero API key needed)
+        return self._synthesize_local(user_input, tool_results, system_1_intent)
+
+    def synthesize_stream(
+        self,
+        user_input: str,
+        tool_results: List[Dict[str, Any]],
+        system_1_intent: Optional[str] = None,
+    ):
+        """
+        Stream response token-by-token for sub-100ms Time-To-First-Token (TTFT).
+        """
+        # Fast-path for tool results
+        if tool_results:
+            full_text = self._synthesize_local(user_input, tool_results, system_1_intent)
+            yield full_text
+            return
+
+        if self.has_api_key:
+            try:
+                import litellm
+                messages = [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_input},
+                ]
+                response = litellm.completion(
+                    model=self.model_name,
+                    messages=messages,
+                    temperature=0.3,
+                    stream=True,
+                    timeout=4.0,
+                )
+                for chunk in response:
+                    delta = chunk.choices[0].delta.content or ""
+                    if delta:
+                        yield delta
+                return
+            except Exception as e:
+                logger.warning(f"Streaming LLM fallback: {e}")
+
+        yield self._synthesize_local(user_input, tool_results, system_1_intent)
+
+    def _synthesize_local(
+        self,
+        user_input: str,
+        tool_results: List[Dict[str, Any]],
+        system_1_intent: Optional[str] = None,
+    ) -> str:
+        """High-performance local synthesis (Sub-0.1ms, Zero API key needed)."""
         if not tool_results:
             return f"Processed request '{user_input}'. Intent identified as: {system_1_intent or 'general'}."
 
