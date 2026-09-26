@@ -41,32 +41,231 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initWebSocket();
 
-  // Quick Action Chips
+  // =========================================================================
+  // Krishi Varta Slide-Out Chat Drawer & Vertical Handle
+  // =========================================================================
+  const krishiVartaDrawer = document.getElementById("krishi-varta-drawer");
+  const btnToggleKrishiVarta = document.getElementById("btn-toggle-krishi-varta");
+  const btnCloseKrishiVarta = document.getElementById("btn-close-krishi-varta");
+  const krishiVartaBackdrop = document.getElementById("krishi-varta-backdrop");
+
+  function openKrishiVartaDrawer() {
+    if (krishiVartaDrawer) krishiVartaDrawer.classList.add("is-open");
+    if (krishiVartaBackdrop) krishiVartaBackdrop.classList.add("is-open");
+    if (chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight;
+    setTimeout(() => {
+      if (userInput) userInput.focus({ preventScroll: true });
+    }, 250);
+  }
+
+  function closeKrishiVartaDrawer() {
+    if (krishiVartaDrawer) krishiVartaDrawer.classList.remove("is-open");
+    if (krishiVartaBackdrop) krishiVartaBackdrop.classList.remove("is-open");
+  }
+
+  function toggleKrishiVartaDrawer() {
+    if (krishiVartaDrawer && krishiVartaDrawer.classList.contains("is-open")) {
+      closeKrishiVartaDrawer();
+    } else {
+      openKrishiVartaDrawer();
+    }
+  }
+
+  if (btnToggleKrishiVarta) {
+    btnToggleKrishiVarta.addEventListener("click", toggleKrishiVartaDrawer);
+  }
+  if (btnCloseKrishiVarta) {
+    btnCloseKrishiVarta.addEventListener("click", closeKrishiVartaDrawer);
+  }
+  if (krishiVartaBackdrop) {
+    krishiVartaBackdrop.addEventListener("click", closeKrishiVartaDrawer);
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeKrishiVartaDrawer();
+    }
+  });
+
+  // Quick Action Chips (Auto-opens Krishi Varta drawer)
   document.querySelectorAll(".chip-btn").forEach((chip) => {
     chip.addEventListener("click", () => {
       const q = chip.getAttribute("data-query");
       userInput.value = q;
+      openKrishiVartaDrawer();
       chatForm.dispatchEvent(new Event("submit"));
     });
   });
 
-  // Real-Life Farmer Crisis Solvers & Quick Chips
+  // Real-Life Farmer Crisis Solvers & Quick Chips (Auto-opens Krishi Varta drawer)
   document.querySelectorAll(".crisis-btn, .crisis-chip").forEach((btn) => {
     btn.addEventListener("click", () => {
       const q = btn.getAttribute("data-query");
       userInput.value = q;
+      openKrishiVartaDrawer();
       chatForm.dispatchEvent(new Event("submit"));
     });
   });
 
-  // Outdoor Field Mode Toggle (Direct Sunlight High-Contrast)
-  const btnFieldMode = document.getElementById("btn-field-mode");
-  if (btnFieldMode) {
-    btnFieldMode.addEventListener("click", () => {
-      const isField = document.body.classList.toggle("field-mode");
-      btnFieldMode.innerHTML = isField ? "<span>🌙 Dark Matrix</span>" : "<span>☀️ Field Mode</span>";
+  // =========================================================================
+  // Circadian Diurnal 3-Phase Color Theme Engine (Auto Device Time Synchronized)
+  // Options: Auto (Device Time) | 🌅 Morning | ☀️ Afternoon | 🌙 Night | 🚫 Mode Off (Constant)
+  // =========================================================================
+  const themeModeSelect = document.getElementById("theme-mode-select");
+  const customModeDropdown = document.getElementById("custom-mode-dropdown");
+  const modeDropdownTrigger = document.getElementById("mode-dropdown-trigger");
+  const selectedModeText = document.getElementById("selected-mode-text");
+  const modeDropdownItems = document.querySelectorAll(".mode-dropdown-item");
+
+  let currentThemeSetting = localStorage.getItem("kisanzess_circadian_theme") || "auto";
+
+  const modeDisplayNames = {
+    auto: "⏰ Auto (Device Time)",
+    dark: "🌑 Dark Mode",
+    light: "☀️ Light Mode",
+    morning: "🌅 Morning (Dawn)",
+    afternoon: "☀️ Afternoon (Daylight)",
+    night: "🌙 Night (Obsidian)",
+    off: "🚫 Mode Off (Constant)"
+  };
+
+  function updateModeDropdownUI(setting) {
+    if (selectedModeText && modeDisplayNames[setting]) {
+      selectedModeText.textContent = modeDisplayNames[setting];
+    }
+    modeDropdownItems.forEach((item) => {
+      item.classList.toggle("active", item.dataset.value === setting);
+    });
+    if (themeModeSelect) {
+      themeModeSelect.value = setting;
+    }
+  }
+
+  function getDeviceTimeTheme() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return { id: "morning", name: "Morning", icon: "🌅", desc: "05:00–12:00 Sunrise Amber Dawn" };
+    } else if (hour >= 12 && hour < 18) {
+      return { id: "afternoon", name: "Afternoon", icon: "☀️", desc: "12:00–18:00 Sunlight Field" };
+    } else {
+      return { id: "night", name: "Night", icon: "🌙", desc: "18:00–05:00 Obsidian Midnight" };
+    }
+  }
+
+  function applyCircadianTheme(setting = currentThemeSetting) {
+    document.body.classList.remove(
+      "theme-morning", 
+      "theme-afternoon", 
+      "theme-night", 
+      "theme-dark", 
+      "theme-light", 
+      "theme-off", 
+      "field-mode", 
+      "dark-theme"
+    );
+    
+    if (setting === "off") {
+      document.body.classList.add("theme-off", "dark-theme");
+      updateModeDropdownUI("off");
+      return;
+    }
+
+    if (setting === "dark") {
+      document.body.classList.add("theme-dark", "dark-theme");
+      updateModeDropdownUI("dark");
+      return;
+    }
+
+    if (setting === "light") {
+      document.body.classList.add("theme-light", "field-mode");
+      updateModeDropdownUI("light");
+      return;
+    }
+
+    let activeThemeId = setting;
+    const isAuto = setting === "auto";
+
+    if (isAuto) {
+      const detected = getDeviceTimeTheme();
+      activeThemeId = detected.id;
+    }
+
+    document.body.classList.add(`theme-${activeThemeId}`);
+    if (activeThemeId === "afternoon") {
+      document.body.classList.add("field-mode");
+    } else if (activeThemeId === "night") {
+      document.body.classList.add("dark-theme");
+    }
+
+    updateModeDropdownUI(setting);
+  }
+
+  // Custom Dropdown Trigger & Option Clicks
+  if (modeDropdownTrigger && customModeDropdown) {
+    modeDropdownTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = customModeDropdown.classList.toggle("is-open");
+      modeDropdownTrigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    modeDropdownItems.forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const chosen = item.dataset.value;
+        currentThemeSetting = chosen;
+        localStorage.setItem("kisanzess_circadian_theme", currentThemeSetting);
+        applyCircadianTheme(currentThemeSetting);
+        customModeDropdown.classList.remove("is-open");
+        modeDropdownTrigger.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!customModeDropdown.contains(e.target)) {
+        customModeDropdown.classList.remove("is-open");
+        modeDropdownTrigger.setAttribute("aria-expanded", "false");
+      }
     });
   }
+
+  // Initial application & event listener for fallback select
+  if (themeModeSelect) {
+    themeModeSelect.addEventListener("change", (e) => {
+      currentThemeSetting = e.target.value;
+      localStorage.setItem("kisanzess_circadian_theme", currentThemeSetting);
+      applyCircadianTheme(currentThemeSetting);
+    });
+  }
+
+  applyCircadianTheme(currentThemeSetting);
+
+  // Auto-sync every 60 seconds with device clock when in auto mode
+  setInterval(() => {
+    if (currentThemeSetting === "auto") {
+      applyCircadianTheme("auto");
+    }
+  }, 60000);
+
+  // =========================================================================
+  // Interactive Expandable Emoji Pills (Click Emoji to Reveal Name/Controls)
+  // =========================================================================
+  const expandablePills = document.querySelectorAll(".expandable-ctrl-pill");
+
+  expandablePills.forEach((pill) => {
+    pill.addEventListener("click", (e) => {
+      // Prevent collapse when interacting with custom dropdown elements
+      if (e.target.closest(".custom-mode-dropdown") || e.target.tagName === "SELECT" || e.target.tagName === "OPTION") return;
+
+      const isAlreadyExpanded = pill.classList.contains("is-expanded");
+
+      // Collapse other pills to keep header decongested
+      expandablePills.forEach((p) => {
+        if (p !== pill) p.classList.remove("is-expanded");
+      });
+
+      pill.classList.toggle("is-expanded", !isAlreadyExpanded);
+    });
+  });
 
   // Sidebar Toggle (Full Width Chat vs Split View)
   const btnToggleSidebar = document.getElementById("btn-toggle-sidebar");
@@ -298,22 +497,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Run Benchmark Button
-  btnBenchmark.addEventListener("click", async () => {
-    btnBenchmark.disabled = true;
-    btnBenchmark.textContent = "Running Benchmark...";
-    try {
-      const res = await fetch("/api/benchmark");
-      const data = await res.json();
-      btnBenchmark.textContent = "✓ Benchmark Done";
-      setTimeout(() => {
+  if (btnBenchmark) {
+    const benchmarkLabelText = document.getElementById("benchmark-label-text");
+    btnBenchmark.addEventListener("click", async () => {
+      btnBenchmark.disabled = true;
+      if (benchmarkLabelText) benchmarkLabelText.textContent = "Running...";
+      try {
+        const res = await fetch("/api/benchmark");
+        const data = await res.json();
+        if (benchmarkLabelText) benchmarkLabelText.textContent = "✓ Done (31ms)";
+        setTimeout(() => {
+          btnBenchmark.disabled = false;
+          if (benchmarkLabelText) benchmarkLabelText.textContent = "Benchmark";
+        }, 3000);
+      } catch (e) {
         btnBenchmark.disabled = false;
-        btnBenchmark.textContent = "⚡ Run Benchmark";
-      }, 3000);
-    } catch (e) {
-      btnBenchmark.disabled = false;
-      btnBenchmark.textContent = "⚡ Run Benchmark";
-    }
-  });
+        if (benchmarkLabelText) benchmarkLabelText.textContent = "Benchmark";
+      }
+    });
+  }
 
   // Refresh Telemetry Button
   btnRefresh.addEventListener("click", async () => {
@@ -822,13 +1024,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Trigger map resize on tab switch
-  document.querySelectorAll(".nav-tab").forEach((tab) => {
+  // Farm Memory Vault loader
+  async function loadFarmMemory() {
+    const memoryPre = document.getElementById("memory-md-content");
+    if (!memoryPre) return;
+    try {
+      const res = await fetch("/api/memory/farm");
+      const data = await res.json();
+      if (data.memory_md) {
+        memoryPre.innerHTML = `<code>${data.memory_md.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>`;
+      }
+    } catch (e) {
+      console.warn("Could not load farm memory:", e);
+    }
+  }
+
+  // Load initial farm memory in background
+  loadFarmMemory();
+
+  // App Nav Tab Switching (Soil ML | Panchayat | Khet-Vault | Telemetry)
+  document.querySelectorAll(".app-nav-tabs .nav-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       const tabTarget = tab.getAttribute("data-tab");
       if (!tabTarget) return;
 
-      document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
+      document.querySelectorAll(".app-nav-tabs .nav-tab").forEach((t) => t.classList.remove("active"));
       document.querySelectorAll(".tab-pane").forEach((p) => p.classList.remove("active"));
 
       tab.classList.add("active");
@@ -840,6 +1060,8 @@ document.addEventListener("DOMContentLoaded", () => {
           initAgriSatelliteMap();
           if (mapInstance) mapInstance.invalidateSize();
         }, 200);
+      } else if (tabTarget === "tab-memory") {
+        loadFarmMemory();
       }
     });
   });

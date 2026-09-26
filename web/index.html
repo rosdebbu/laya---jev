@@ -7,7 +7,7 @@
   <meta name="description" content="Dual-Brain vernacular agricultural intelligence agent combining sub-35ms Laya ModernBERT reflex, OpenZess Krishi Panchayat multi-agent debate, l-data-seT---ML empirical models, and Google Gemini 1.5 Flash vision.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Leaflet.js for Satellite Imagery & Earth Observation Mandi Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -23,147 +23,204 @@
 
   <div class="app-layout">
     <!-- Header / Navbar (Clean, Decongested Minimalist) -->
-    <header class="app-header glass-card">
-      <div class="logo-group">
-        <div class="logo-badge">
-          <span class="pulse-ring"></span>
-          🌾
+    <header class="app-header">
+      <div class="header-left-col">
+        <div class="logo-group">
+          <div class="logo-badge">
+            <span class="wheat-emoji">🌾</span>
+          </div>
+          <div>
+            <h1 class="brand-title">KisanZess <span class="tag">A Dual-Brain Multi AI</span></h1>
+            <p class="brand-subtitle">Sub-35ms Vernacular Co-Pilot • Google Cloud Code for Communities</p>
+          </div>
         </div>
-        <div>
-          <h1 class="brand-title">KisanZess <span class="tag">Dual-Brain Agri AI</span></h1>
-          <p class="brand-subtitle">Sub-35ms Vernacular Co-Pilot • Google Cloud Code for Communities</p>
+
+        <!-- Live Mandi Mini Ticker (Aligned left with increased spacing below KisanZess) -->
+        <div class="mandi-ticker glass-subcard">
+          <span class="ticker-label"><span class="ticker-dot">🔴</span>LIVE APMC:</span>
+          <span class="ticker-item"><span class="mandi-place">Indore:</span> <span class="crop-name">Soybean</span> <strong class="crop-price">₹4,650</strong></span>
+          <span class="ticker-sep">•</span>
+          <span class="ticker-item"><span class="mandi-place">Agartala:</span> <span class="crop-name">Tomato</span> <strong class="crop-price">₹2,450</strong></span>
+          <span class="ticker-sep">•</span>
+          <span class="ticker-item"><span class="mandi-place">Kolar:</span> <span class="crop-name">Paddy</span> <strong class="crop-price">₹2,183</strong></span>
         </div>
       </div>
 
-      <!-- Live Mandi Mini Ticker -->
-      <div class="mandi-ticker glass-subcard">
-        <span class="ticker-label">🟢 LIVE APMC:</span>
-        <span class="ticker-item">Indore: <strong>Soybean ₹4,650</strong></span>
-        <span class="ticker-sep">•</span>
-        <span class="ticker-item">Agartala: <strong>Tomato ₹2,450</strong></span>
-        <span class="ticker-sep">•</span>
-        <span class="ticker-item">Kolar: <strong>Paddy ₹2,183</strong></span>
-      </div>
+      <!-- Third line: Shifted to right and represented vertically with click-to-expand emoji pills -->
+      <div class="header-status-group expandable-controls-stack">
+        <!-- 1. Speed Reflex Badge -->
+        <button type="button" class="expandable-ctrl-pill" id="ctrl-speed-pill" title="Click to reveal Reflex Speed">
+          <span class="ctrl-emoji">⚡</span>
+          <span class="ctrl-content">
+            <span class="status-dot green"></span>
+            <span class="status-text" id="speed-badge">&lt; 35ms Reflex</span>
+          </span>
+        </button>
 
-      <div class="header-status-group">
-        <div class="status-indicator">
-          <span class="status-dot green"></span>
-          <span class="status-text" id="speed-badge">⚡ &lt; 35ms Reflex</span>
-        </div>
-        <div id="voice-indicator" class="voice-wave-container" title="Vernacular Speech Audio">
-          <span class="voice-bar"></span>
-          <span class="voice-bar"></span>
-          <span class="voice-bar"></span>
-          <span class="voice-label">Audio</span>
-        </div>
-        <button id="btn-field-mode" class="btn-secondary-pill" title="Toggle Outdoor High-Contrast Sunlight Mode">
-          <span>☀️ Field Mode</span>
+        <!-- 2. Audio Voice -->
+        <button type="button" class="expandable-ctrl-pill" id="ctrl-voice-pill" title="Click to reveal Vernacular Audio">
+          <span class="ctrl-emoji">🔊</span>
+          <span class="ctrl-content voice-wave-container" id="voice-indicator">
+            <span class="voice-bar"></span>
+            <span class="voice-bar"></span>
+            <span class="voice-bar"></span>
+            <span class="voice-label">Audio</span>
+          </span>
         </button>
-        <button id="btn-run-benchmark" class="btn-primary-pill">
-          <span>⚡ Benchmark</span>
+
+        <!-- 3. Benchmark -->
+        <button type="button" class="expandable-ctrl-pill" id="btn-run-benchmark" title="Click to reveal & run Benchmark">
+          <span class="ctrl-emoji">📈</span>
+          <span class="ctrl-content benchmark-text" id="benchmark-label-text">Benchmark</span>
         </button>
+
+        <!-- 4. Mode Dropdown -->
+        <div class="expandable-ctrl-pill" id="ctrl-mode-pill" title="Click to reveal Mode Selector">
+          <span class="ctrl-emoji" id="mode-emoji-btn">🎨</span>
+          <div class="ctrl-content mode-dropdown-container">
+            <span class="mode-label">Mode:</span>
+            <div class="custom-mode-dropdown" id="custom-mode-dropdown">
+              <button type="button" class="mode-dropdown-trigger" id="mode-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span id="selected-mode-text">⏰ Auto (Device Time)</span>
+                <span class="dropdown-caret">▾</span>
+              </button>
+              <div class="mode-dropdown-menu" id="mode-dropdown-menu" role="listbox">
+                <div class="mode-dropdown-item active" data-value="auto">⏰ Auto (Device Time)</div>
+                <div class="mode-dropdown-item" data-value="dark">🌑 Dark Mode</div>
+                <div class="mode-dropdown-item" data-value="light">☀️ Light Mode</div>
+                <div class="mode-dropdown-item" data-value="morning">🌅 Morning (Dawn)</div>
+                <div class="mode-dropdown-item" data-value="afternoon">☀️ Afternoon (Daylight)</div>
+                <div class="mode-dropdown-item" data-value="night">🌙 Night (Obsidian)</div>
+                <div class="mode-dropdown-item" data-value="off">🚫 Mode Off (Constant)</div>
+              </div>
+            </div>
+            <select id="theme-mode-select" class="theme-dropdown-select" title="Background Color Circadian Mode" style="display: none;">
+              <option value="auto">⏰ Auto (Device Time)</option>
+              <option value="dark">🌑 Dark Mode</option>
+              <option value="light">☀️ Light Mode</option>
+              <option value="morning">🌅 Morning (Dawn)</option>
+              <option value="afternoon">☀️ Afternoon (Daylight)</option>
+              <option value="night">🌙 Night (Obsidian)</option>
+              <option value="off">🚫 Mode Off (Constant)</option>
+            </select>
+          </div>
+        </div>
       </div>
     </header>
 
-    <!-- Navigation Tabs (Sleek Segmented Pill Bar) -->
+    <!-- Navigation Tabs (Sleek Segmented Pill Bar - Horizontal Scroll Bar) -->
     <nav class="app-nav-tabs glass-subcard">
-      <button class="nav-tab active" data-tab="tab-chat">💬 Krishi Varta (Dual-Brain Chat)</button>
-      <button class="nav-tab" data-tab="tab-soil-ml">🌱 Soil & Crop ML (l-data-seT---ML)</button>
+      <button class="nav-tab active" data-tab="tab-soil-ml">🌱 Soil & Crop ML (l-data-seT---ML)</button>
       <button class="nav-tab" data-tab="tab-panchayat">🏛️ Krishi Panchayat (4-Agent WarRoom)</button>
       <button class="nav-tab" data-tab="tab-memory">📜 Khet-Vault Memory (FARM_MEMORY.md)</button>
+      <button class="nav-tab" data-tab="tab-telemetry">📊 Dual-Brain Telemetry & Insights</button>
     </nav>
 
-    <!-- Tab 1: Krishi Varta Console (Chat + Telemetry) -->
-    <div id="tab-chat" class="tab-pane active">
-      <main class="dashboard-grid">
-        <!-- Left Column: Spacious Interactive Chat Canvas -->
-        <section class="chat-section glass-card" aria-label="Interactive Agent Console">
-          <div class="card-header">
-            <div class="card-title-group">
-              <span class="icon">💬</span>
-              <h2>Krishi Varta: Vernacular Farm Console</h2>
+    <!-- Slide-Out Right-Hand Krishi Varta Chat Drawer -->
+    <div class="krishi-varta-backdrop" id="krishi-varta-backdrop"></div>
+    <aside class="krishi-varta-drawer" id="krishi-varta-drawer" aria-label="Krishi Varta Chat Drawer">
+      <!-- Vertical Tab Handle on the Left Edge of the Drawer (Moves aside alongside the drawer) -->
+      <button type="button" class="krishi-varta-tab-handle" id="btn-toggle-krishi-varta" title="Toggle Krishi Varta Chat Console">
+        <span class="handle-icon">💬</span>
+        <span class="handle-text">Krishi Varta (Dual-Brain Chat)</span>
+        <span class="handle-pulse-dot"></span>
+      </button>
+
+      <!-- Complete Interactive Chat Console Body -->
+      <div class="krishi-varta-drawer-body">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="icon">💬</span>
+            <h2>Krishi Varta: Vernacular Farm Console</h2>
+          </div>
+          <div class="drawer-header-actions">
+            <button type="button" class="drawer-close-btn" id="btn-close-krishi-varta" title="Close Chat Drawer">✕</button>
+          </div>
+        </div>
+        
+        <!-- Compact Farmer Profile & Mode in Header -->
+        <div class="header-tools-row">
+          <div class="farmer-compact-badge">
+            <span class="avatar-mini">👨‍🌾</span>
+            <span>रामेश्वर पटेल (Indore • 4.0 Acres)</span>
+            <span class="memory-mini-dot" title="Khet-Vault Active">🧠</span>
+          </div>
+          <div class="mode-selector">
+            <select id="agent-mode-select" class="custom-select">
+              <option value="hybrid" selected>Dual-Brain (Reflex + Panchayat)</option>
+              <option value="pure_reflex">Pure Reflex (Sub-35ms, $0)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Action Crisis Carousel (Clean, Low-Profile) -->
+        <div class="crisis-ribbon">
+          <button class="crisis-chip" data-query="दुकानदार ₹2,800 का जहरीला केमिकल टॉनिक बेच रहा है। क्या मैं खरीदूँ या कोई सस्ता जैविक उपाय है?">
+            <span>🚨 ₹2,800 दवा vs जैविक ₹180 बचत</span>
+          </button>
+          <button class="crisis-chip" data-query="इंदौर मंडी में आढ़ती सोयाबीन ₹1,900/क्विंटल दे रहा है। क्या आज ही बेचूँ या रोकूँ?">
+            <span>📉 मंडी आढ़ती हेराफेरी से बचाव (+₹550)</span>
+          </button>
+          <button class="crisis-chip" data-query="गेहूं की पत्तियां पीली पड़ रही हैं। क्या 2 बोरी यूरिया और डाल दूँ या जिंक की कमी है?">
+            <span>🧪 यूरिया छिड़काव vs संतुलित NPK</span>
+          </button>
+          <button class="crisis-chip" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह अगेती झुलसा (Early Blight) रोग है?">
+            <span>📸 पत्ती रोग त्वरित Gemini विजन</span>
+          </button>
+        </div>
+
+        <!-- Spacious Chat Stream Area -->
+        <div id="chat-messages" class="messages-container" role="log" aria-live="polite">
+          <div class="message assistant-msg glass-subcard">
+            <div class="msg-header">
+              <span class="role-badge reflex-badge">⚡ KisanZess Co-Pilot</span>
+              <span class="timestamp">Ready</span>
             </div>
-            
-            <!-- Compact Farmer Profile & Mode in Header -->
-            <div class="header-tools-row">
-              <div class="farmer-compact-badge">
-                <span class="avatar-mini">👨‍🌾</span>
-                <span>रामेश्वर पटेल (Indore • 4.0 Acres)</span>
-                <span class="memory-mini-dot" title="Khet-Vault Active">🧠</span>
-              </div>
-              <div class="mode-selector">
-                <select id="agent-mode-select" class="custom-select">
-                  <option value="hybrid" selected>Dual-Brain (Reflex + Panchayat)</option>
-                  <option value="pure_reflex">Pure Reflex (Sub-35ms, $0)</option>
-                </select>
-              </div>
+            <div class="msg-body">
+              नमस्ते रामेश्वर जी! मैं <strong>KisanZess</strong> हूँ — आपका बहुभाषी डिजिटल कृषि सलाहकार। 
+              <br><br>
+              ⚡ <strong>30ms में मंडी भाव:</strong> अगरतला, इंदौर, या आज़ादपुर मंडी के ताज़ा दाम जानें।<br>
+              🌱 <strong>मृदा परीक्षण (ML):</strong> अपनी मिट्टी की N-P-K रिपोर्ट से सही फसल चुनें।<br>
+              📸 <strong>पत्ती रोग निदान (Gemini 1.5 Flash):</strong> रोगग्रस्त पत्ती की फोटो भेजें या ड्रैग करें।<br>
+              🏛️ <strong>कृषि पंचायत:</strong> महंगे कीटनाशक बनाम तुड़ाई के व्यापारिक निर्णय पर 4 विशेषज्ञों की राय लें।
             </div>
           </div>
+        </div>
 
-          <!-- Quick Action Crisis Carousel (Clean, Low-Profile) -->
-          <div class="crisis-ribbon">
-            <button class="crisis-chip" data-query="दुकानदार ₹2,800 का जहरीला केमिकल टॉनिक बेच रहा है। क्या मैं खरीदूँ या कोई सस्ता जैविक उपाय है?">
-              <span>🚨 ₹2,800 दवा vs जैविक ₹180 बचत</span>
-            </button>
-            <button class="crisis-chip" data-query="इंदौर मंडी में आढ़ती सोयाबीन ₹1,900/क्विंटल दे रहा है। क्या आज ही बेचूँ या रोकूँ?">
-              <span>📉 मंडी आढ़ती हेराफेरी से बचाव (+₹550)</span>
-            </button>
-            <button class="crisis-chip" data-query="गेहूं की पत्तियां पीली पड़ रही हैं। क्या 2 बोरी यूरिया और डाल दूँ या जिंक की कमी है?">
-              <span>🧪 यूरिया छिड़काव vs संतुलित NPK</span>
-            </button>
-            <button class="crisis-chip" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह अगेती झुलसा (Early Blight) रोग है?">
-              <span>📸 पत्ती रोग त्वरित Gemini विजन</span>
-            </button>
+        <!-- Bottom Input Bar & Categorized Chips -->
+        <div class="chat-input-bar">
+          <div class="quick-chips">
+            <button class="chip-btn" data-query="अगरतला मंडी में आज टमाटर और प्याज का क्या भाव चल रहा है?">📈 अगरतला मंडी भाव (15ms)</button>
+            <button class="chip-btn" data-query="Soil test report: N=90, P=42, K=43, pH=6.5, rainfall=180mm. Which crop gives best yield?">🌱 Soil NPK (ML)</button>
+            <button class="chip-btn" data-query="धान की फसल में यूरिया और डीएपी कितना डालें? मिट्टी में नाइट्रोजन 40 है।">🧪 खाद की खुराक (Fertilizer)</button>
+            <button class="chip-btn" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह झुलसा रोग है?">📸 पत्ती रोग (Gemini Vision)</button>
+            <button class="chip-btn" data-query="टमाटर में सफ़ेद मक्खी लग रही है और मंडी में भाव ₹3,800 क्विंटल है। क्या ₹1,800 की महंगी कीटनाशक दवा डालें या जल्दी तुड़ाई करके बेचें?">🏛️ कृषि पंचायत बहस</button>
           </div>
+          <form id="chat-form" class="input-form">
+            <label for="leaf-upload" class="btn-attach" title="Upload Leaf Photo for Google Gemini Vision">
+              📸
+              <input type="file" id="leaf-upload" accept="image/*" style="display:none">
+            </label>
+            <input 
+              type="text" 
+              id="user-input" 
+              class="text-input" 
+              placeholder="अपनी भाषा में पूछें (जैसे: इंदौर मंडी में सोयाबीन का भाव क्या है?)..." 
+              autocomplete="off"
+            >
+            <button type="submit" id="btn-send" class="btn-send" aria-label="Send message">
+              <span>Send</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </aside>
 
-          <!-- Spacious Chat Stream Area -->
-          <div id="chat-messages" class="messages-container" role="log" aria-live="polite">
-            <div class="message assistant-msg glass-subcard">
-              <div class="msg-header">
-                <span class="role-badge reflex-badge">⚡ KisanZess Co-Pilot</span>
-                <span class="timestamp">Ready</span>
-              </div>
-              <div class="msg-body">
-                नमस्ते रामेश्वर जी! मैं <strong>KisanZess</strong> हूँ — आपका बहुभाषी डिजिटल कृषि सलाहकार। 
-                <br><br>
-                ⚡ <strong>30ms में मंडी भाव:</strong> अगरतला, इंदौर, या आज़ादपुर मंडी के ताज़ा दाम जानें।<br>
-                🌱 <strong>मृदा परीक्षण (ML):</strong> अपनी मिट्टी की N-P-K रिपोर्ट से सही फसल चुनें।<br>
-                📸 <strong>पत्ती रोग निदान (Gemini 1.5 Flash):</strong> रोगग्रस्त पत्ती की फोटो भेजें या ड्रैग करें।<br>
-                🏛️ <strong>कृषि पंचायत:</strong> महंगे कीटनाशक बनाम तुड़ाई के व्यापारिक निर्णय पर 4 विशेषज्ञों की राय लें।
-              </div>
-            </div>
-          </div>
-
-          <!-- Bottom Input Bar & Categorized Chips -->
-          <div class="chat-input-bar">
-            <div class="quick-chips">
-              <button class="chip-btn" data-query="अगरतला मंडी में आज टमाटर और प्याज का क्या भाव चल रहा है?">📈 अगरतला मंडी भाव (15ms)</button>
-              <button class="chip-btn" data-query="Soil test report: N=90, P=42, K=43, pH=6.5, rainfall=180mm. Which crop gives best yield?">🌱 Soil NPK (ML)</button>
-              <button class="chip-btn" data-query="धान की फसल में यूरिया और डीएपी कितना डालें? मिट्टी में नाइट्रोजन 40 है।">🧪 खाद की खुराक (Fertilizer)</button>
-              <button class="chip-btn" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह झुलसा रोग है?">📸 पत्ती रोग (Gemini Vision)</button>
-              <button class="chip-btn" data-query="टमाटर में सफ़ेद मक्खी लग रही है और मंडी में भाव ₹3,800 क्विंटल है। क्या ₹1,800 की महंगी कीटनाशक दवा डालें या जल्दी तुड़ाई करके बेचें?">🏛️ कृषि पंचायत बहस</button>
-            </div>
-            <form id="chat-form" class="input-form">
-              <label for="leaf-upload" class="btn-attach" title="Upload Leaf Photo for Google Gemini Vision">
-                📸
-                <input type="file" id="leaf-upload" accept="image/*" style="display:none">
-              </label>
-              <input 
-                type="text" 
-                id="user-input" 
-                class="text-input" 
-                placeholder="अपनी भाषा में पूछें (जैसे: इंदौर मंडी में सोयाबीन का भाव क्या है?)..." 
-                autocomplete="off"
-              >
-              <button type="submit" id="btn-send" class="btn-send" aria-label="Send message">
-                <span>Send</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-              </button>
-            </form>
-          </div>
-        </section>
-
-        <!-- Right Column: Clean Telemetry & Insights Panel -->
+    <!-- Dedicated Tab 4: Dual-Brain Telemetry & Insights -->
+    <div id="tab-telemetry" class="tab-pane">
+      <main class="telemetry-page-layout">
+        <!-- Telemetry & Insights Panel -->
         <section class="telemetry-section glass-card" aria-label="Real-time Metrics">
           <div class="card-header">
             <div class="card-title-group">
@@ -274,8 +331,8 @@
       </main>
     </div>
 
-    <!-- Tab 2: Soil NPK & Satellite Earth Map (from l-data-seT---ML) -->
-    <div id="tab-soil-ml" class="tab-pane">
+    <!-- Tab 1: Soil NPK & Satellite Earth Map (from l-data-seT---ML) -->
+    <div id="tab-soil-ml" class="tab-pane active">
       <div class="soil-studio-grid">
         <!-- Left: Sliders Form Card -->
         <section class="glass-card soil-inputs-card">

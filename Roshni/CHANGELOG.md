@@ -1,5 +1,15 @@
 # Roshni Changelog
 
+## [1.3.0] - 2026-09-27
+
+### UI/UX & Interaction Enhancements
+- **Vertical Krishi Varta Slide-Out Drawer**: Relocated the Krishi Varta chat console to a right-hand slide-out drawer with a vertical handle tab that moves aside alongside the drawer during expansion/collapse.
+- **Dark & Light Mode Integration**: Added explicit `🌑 Dark Mode` and `☀️ Light Mode` options to the Circadian Mode dropdown selector with persistent local storage.
+- **Scrollable Segmented Navigation Bar**: Formatted the top navigation bar into a horizontally scrollable segmented control for Soil ML, Krishi Panchayat, Khet-Vault Memory, and Dual-Brain Telemetry.
+- **Expandable Header Control Stack**: Shifted header controls (Audio, Benchmark, Mode) into an expandable vertical stack with hover tooltips and glow effects.
+
+---
+
 ## [1.2.0] - 2026-09-27
 
 ### UI/UX Updates
