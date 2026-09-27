@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KisanZess | Dual-Brain Vernacular Farm & Mandi Co-Pilot</title>
   <meta name="description" content="Dual-Brain vernacular agricultural intelligence agent combining sub-35ms Laya ModernBERT reflex, OpenZess Krishi Panchayat multi-agent debate, l-data-seT---ML empirical models, and Google Gemini 1.5 Flash vision.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -13,231 +14,1003 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- Tailwind CSS CDN with KisanZess Brand Palette -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'royal-amethyst': '#2E0854',
+            'emerald-green': '#50C878',
+            'almond': '#D6BD98',
+            'matcha-brew': '#40534C',
+            'deep-forest': '#013220',
+            'mint-whisper': '#E0EFEA'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Outfit', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body class="dark-theme">
-  <!-- Glowing Background Orbs (Luxury Palette) -->
+  <!-- Glowing Dynamic Background Orbs -->
   <div class="glow-orb orb-1"></div>
   <div class="glow-orb orb-2"></div>
   <div class="glow-orb orb-3"></div>
 
+  <!-- Backdrop for Mobile Off-Canvas Drawer -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
   <div class="app-layout">
-    <!-- Header / Navbar -->
-    <header class="app-header glass-card">
-      <div class="logo-group">
-        <div class="logo-badge">
-          <span class="pulse-ring"></span>
-          🌾
+    <!-- Desktop & Mobile Unified Dashboard Container (Exact Match to Mockup Frame) -->
+    <div class="dashboard-frame">
+      
+      <!-- LEFT SIDEBAR (Desktop Fixed/Collapsible & Mobile Slide-Out Drawer) -->
+      <!-- LEFT SIDEBAR (Desktop Fixed & Permanent Side-by-Side Matching Master Mockup) -->
+      <aside id="app-sidebar" class="app-sidebar glass-card">
+        <!-- Sidebar Brand Header -->
+        <div class="sidebar-brand-row">
+          <div class="sidebar-brand">
+            <span class="sidebar-logo-icon">🌾</span>
+            <span class="sidebar-brand-text">KisanZess</span>
+          </div>
+          <button id="btn-sidebar-collapse" class="btn-sidebar-collapse" title="Collapse / Expand Sidebar">
+            <span>❮❮</span>
+          </button>
         </div>
-        <div>
-          <h1 class="brand-title">KisanZess <span class="tag">Dual-Brain Agri</span></h1>
-          <p class="brand-subtitle">Track 4: Agricultural Intelligence | Google Cloud Code for Communities 2.0</p>
-        </div>
-      </div>
 
-      <!-- Live Mandi Marquee Ticker -->
-      <div class="mandi-ticker glass-subcard">
-        <span class="ticker-label">🟢 LIVE APMC MANDI:</span>
-        <span class="ticker-item">Indore: <strong>Soybean ₹4,650</strong>/Qtl (▲ +₹120)</span>
-        <span class="ticker-sep">•</span>
-        <span class="ticker-item">Agartala: <strong>Tomato ₹2,450</strong>/Qtl (▲ +₹80)</span>
-        <span class="ticker-sep">•</span>
-        <span class="ticker-item">Kolar: <strong>Paddy ₹2,183</strong>/Qtl (MSP Active)</span>
-        <span class="ticker-sep">•</span>
-        <span class="ticker-item">Azadpur: <strong>Onion ₹2,900</strong>/Qtl (▲ +₹50)</span>
-      </div>
-
-      <div class="header-status-group">
-        <div class="status-indicator">
-          <span class="status-dot green"></span>
-          <span class="status-text" id="provider-badge">System 1: Laya ModernBERT</span>
+        <!-- Section 1 Action: New Consultation Button -->
+        <div class="sidebar-action-wrap">
+          <button id="btn-new-consultation" class="btn-new-consultation" title="Start New Consultation (Ctrl+N)">
+            <span class="btn-plus">+</span>
+            <span class="btn-text">New Consultation</span>
+          </button>
         </div>
-        <div class="status-indicator">
-          <span class="status-dot purple"></span>
-          <span class="status-text" id="speed-badge">&lt; 35ms Reflex</span>
-        </div>
-        <div id="voice-indicator" class="voice-wave-container" title="Vernacular Speech Audio">
-          <span class="voice-bar"></span>
-          <span class="voice-bar"></span>
-          <span class="voice-bar"></span>
-          <span class="voice-bar"></span>
-          <span class="voice-label">Hindi Voice</span>
-        </div>
-        <button id="btn-field-mode" class="btn-secondary-pill" title="Toggle High-Contrast Outdoor Field Mode for Direct Sunlight">
-          <span>☀️ Field Mode</span>
-        </button>
-        <button id="btn-run-benchmark" class="btn-primary-pill">
-          <span>⚡ Run Agri Benchmark</span>
-        </button>
-      </div>
-    </header>
 
-    <!-- Navigation Tabs (Unifying KisanZess + l-data-seT---ML + OpenZess) -->
-    <nav class="app-nav-tabs glass-subcard">
-      <button class="nav-tab active" data-tab="tab-chat">💬 Krishi Varta (Dual-Brain Console)</button>
-      <button class="nav-tab" data-tab="tab-soil-ml">🌱 Soil NPK & Satellite Earth Map (l-data-seT---ML)</button>
-      <button class="nav-tab" data-tab="tab-panchayat">🏛️ Krishi Panchayat (4-Agent WarRoom)</button>
-      <button class="nav-tab" data-tab="tab-memory">📜 Khet-Vault (FARM_MEMORY.md)</button>
-    </nav>
+        <!-- Farmer Profile Card -->
+        <div class="sidebar-farmer-card" id="sidebar-farmer-btn" title="Active Farmer Profile (Khet-Vault Memory)">
+          <div class="farmer-avatar-ring">
+            <img src="/static/farmer_avatar.svg" alt="Rameshwar Patel" class="farmer-avatar-img">
+          </div>
+          <div class="farmer-details">
+            <div class="farmer-name">Rameshwar Patel</div>
+            <div class="farmer-meta">4.0 Acres • Indore</div>
+          </div>
+          <span class="farmer-chevron">›</span>
+        </div>
 
-    <!-- Tab 1: Krishi Varta Console (Chat + Telemetry) -->
-    <div id="tab-chat" class="tab-pane active">
-      <main class="dashboard-grid">
-        <!-- Left Column: Interactive Chat & Live Reflex Stream -->
-        <section class="chat-section glass-card" aria-label="Interactive Agent Console">
-          <div class="card-header">
-            <div class="card-title-group">
-              <span class="icon">💬</span>
-              <h2>Krishi Varta: Vernacular Farm Console</h2>
+        <!-- 5 Feature Navigation Items -->
+        <nav class="sidebar-nav-list" aria-label="Feature Navigation">
+          <button type="button" class="sidebar-nav-item active" data-tab="view-dashboard">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Mandi Arbitrage Hub</span>
+          </button>
+          <button type="button" class="sidebar-nav-item" data-tab="tab-schemes">
+            <span class="nav-icon">📁</span>
+            <span class="nav-label">Govt Schemes Harvester</span>
+          </button>
+          <button type="button" class="sidebar-nav-item" data-tab="tab-chat" data-action="leaf-vision">
+            <span class="nav-icon">🍃</span>
+            <span class="nav-label">Gemini Leaf Vision</span>
+          </button>
+          <button type="button" class="sidebar-nav-item" data-tab="tab-soil-weather">
+            <span class="nav-icon">⚛</span>
+            <span class="nav-label">Soil NPK Studio</span>
+          </button>
+          <button type="button" class="sidebar-nav-item" data-tab="tab-panchayat">
+            <span class="nav-icon">👥</span>
+            <span class="nav-label">Krishi Panchayat</span>
+          </button>
+        </nav>
+
+        <!-- Sidebar Bottom Telemetry Dock -->
+        <div class="sidebar-footer-dock">
+          <div class="sidebar-reflex-pill" title="Local System 1 Reflex Engine">
+            <span class="status-dot green"></span>
+            <span class="pill-label">Laya System 1:</span>
+            <strong class="pill-latency" id="sidebar-latency">18ms</strong>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN CONTENT COLUMN -->
+      <main class="app-main-content">
+        <!-- Top Dashboard Header Bar (Exact 1:1 Match to Master Mockup) -->
+        <header class="dashboard-top-bar glass-card">
+          <div class="top-bar-left">
+            <button type="button" id="btn-mobile-menu" class="btn-mobile-menu" aria-label="Toggle Navigation Menu">
+              <span>☰</span>
+            </button>
+            <h1 class="top-heading">Dashboard</h1>
+          </div>
+
+          <div class="top-bar-right">
+            <!-- View Mode Square Icon -->
+            <button type="button" id="btn-field-mode" class="btn-icon-square" title="Toggle Clean Sunlight / Dark Matrix Mode">
+              <span>🗖</span>
+            </button>
+
+            <!-- Notification Bell with Alert Dot -->
+            <button type="button" class="btn-icon-circle notif-bell" title="System Alerts & APMC Notifications">
+              <span>🔔</span>
+              <span class="notif-pulse"></span>
+            </button>
+
+            <!-- Farmer Avatar Profile Circle -->
+            <div class="header-avatar-circle" title="Rameshwar Patel (4.0 Acres)">
+              <img src="/static/farmer_avatar.svg" alt="Rameshwar Patel" class="header-avatar-img">
             </div>
-            <div class="mode-selector">
-              <label for="agent-mode-select">Panchayat Mode:</label>
-              <select id="agent-mode-select" class="custom-select">
-                <option value="hybrid" selected>Dual-Brain (Reflex + Krishi Panchayat)</option>
-                <option value="pure_reflex">Pure Reflex (Sub-35ms, $0 Mandi Lookup)</option>
+          </div>
+        </header>
+
+        <!-- Top Ticker Row: Live APMC Mandi Ticker + Location Pill -->
+        <div class="dashboard-ticker-row">
+          <div class="dashboard-ticker-pill glass-subcard">
+            <span class="ticker-prefix">Live APMC mandi Ticker</span>
+            <div class="ticker-tags">
+              <span class="tag-green">▲ ₹251.00</span>
+              <span class="tag-green">▲ ₹1,170.00</span>
+              <span class="tag-green">▲ ₹780.00</span>
+              <span class="tag-green">▲ ₹790.00</span>
+              <span class="tag-green">▲ ₹750.00</span>
+            </div>
+          </div>
+          <div class="dashboard-location-pill glass-subcard" id="header-location-pill">
+            <span>📍 Indore & Malwa (Auto-Detected)</span>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             PRIMARY DASHBOARD VIEW (1:1 Exact Match to Master Mockup)
+             ============================================================== -->
+        <section id="view-dashboard" class="tab-pane active">
+          <div class="dashboard-hero-grid">
+            <!-- Left Major Column: Mandi Arbitrage comparison (3 Columns) -->
+            <div class="mandi-arbitrage-widget glass-subcard">
+              <div class="widget-header-row">
+                <div class="widget-title-group">
+                  <h3>Mandi Arbitrage comparison</h3>
+                </div>
+                <div class="widget-controls">
+                  <select id="select-arbitrage-crop" class="custom-select-sm">
+                    <option value="soybean" selected>All 3 column ▾</option>
+                    <option value="soybean">Soybean (Yellow)</option>
+                    <option value="wheat">Wheat (Sharbati)</option>
+                    <option value="cotton">Cotton (Medium Staple)</option>
+                    <option value="tomato">Tomato</option>
+                    <option value="onion">Onion (Nashik)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 3 Columns Comparison Row -->
+              <div class="arbitrage-cols-container">
+                <!-- Mandi 1: Dewas -->
+                <div class="mandi-stat-card glass-subcard">
+                  <div class="mandi-card-top">
+                    <h4>Mandi Arbitrage</h4>
+                    <span class="mandi-sub-label">Comparison</span>
+                  </div>
+                  <div class="stat-grid-row">
+                    <div class="stat-col"><span class="stat-lbl">Mandi</span><strong class="stat-val" id="dewas-price">₹14,500</strong></div>
+                    <div class="stat-col"><span class="stat-lbl">Price</span><strong class="stat-val" id="dewas-gross">₹16,300</strong></div>
+                  </div>
+                  <div class="stat-line-item">
+                    <span>Net Return</span>
+                    <strong class="net-ret-val" id="dewas-net">+8BC53D</strong>
+                  </div>
+                  <div class="stat-line-item">
+                    <span>Net Profit</span>
+                    <strong class="net-prof-val" id="dewas-profit">+₹4,720</strong>
+                  </div>
+                  <button type="button" class="btn-mandi-card pill-sage" data-mandi="Dewas">Best return</button>
+                </div>
+
+                <!-- Mandi 2: Centerpiece Best-Return Arbitrage (Top Mint #D4E7C5, Body Green #113423) -->
+                <div class="mandi-stat-card best-return-hero-card">
+                  <div class="hero-top-mint">
+                    <div class="mandi-card-top">
+                      <span class="best-badge-text">Best-Return</span>
+                      <h4 class="best-title">Arbitrage</h4>
+                    </div>
+                    <div class="profit-callout-hero">
+                      <div class="profit-giant" id="ujjain-profit">+₹4,720</div>
+                      <div class="profit-subtext">Net Profit</div>
+                    </div>
+                  </div>
+                  <div class="hero-body-green">
+                    <div class="stat-grid-row">
+                      <div class="stat-col"><span class="stat-lbl">Mandi</span><strong class="stat-val" id="ujjain-price">₹17,700</strong></div>
+                      <div class="stat-col"><span class="stat-lbl">Price</span><strong class="stat-val" id="ujjain-gross">₹18,300</strong></div>
+                    </div>
+                    <div class="stat-line-item">
+                      <span>Net Return</span>
+                      <strong class="net-ret-val" id="ujjain-net">+8BC53D</strong>
+                    </div>
+                    <div class="stat-line-item">
+                      <span>Net Profit</span>
+                      <strong class="net-prof-val" id="ujjain-extra-profit">+₹37,230</strong>
+                    </div>
+                    <button type="button" class="btn-mandi-card pill-emerald" data-mandi="Ujjain">Best return</button>
+                  </div>
+                </div>
+
+                <!-- Mandi 3: Indore -->
+                <div class="mandi-stat-card glass-subcard">
+                  <div class="mandi-card-top">
+                    <h4>Mandi Arbitrage</h4>
+                    <span class="mandi-sub-label">Comparison</span>
+                  </div>
+                  <div class="stat-grid-row">
+                    <div class="stat-col"><span class="stat-lbl">Mandi</span><strong class="stat-val" id="indore-price">₹11,500</strong></div>
+                    <div class="stat-col"><span class="stat-lbl">Price</span><strong class="stat-val" id="indore-gross">₹15,300</strong></div>
+                  </div>
+                  <div class="stat-line-item">
+                    <span>Net Return</span>
+                    <strong class="net-ret-val" id="indore-net">+8BC513</strong>
+                  </div>
+                  <div class="stat-line-item">
+                    <span>Net Profit</span>
+                    <strong class="net-prof-val" id="indore-profit">₹D6BD98</strong>
+                  </div>
+                  <button type="button" class="btn-mandi-card pill-almond" data-mandi="Indore">Best retun</button>
+                </div>
+              </div>
+
+              <!-- Bottom Track Slider Indicator (Matching Master Mockup) -->
+              <div class="arbitrage-track-bar">
+                <div class="track-thumb"></div>
+              </div>
+            </div>
+
+            <!-- Right Column: Government Scheme + Conversational AI -->
+            <div class="dashboard-right-panels">
+              <!-- Government Scheme Card -->
+              <div class="gov-scheme-highlight-card glass-subcard">
+                <div class="card-title-row">
+                  <h4>Government Scheme</h4>
+                </div>
+                <p class="scheme-desc">
+                  Government AI response card for Government Scheme.
+                </p>
+                <button type="button" id="btn-dashboard-action-scheme" class="btn-scheme-action-pill">Action Scheme</button>
+              </div>
+
+              <!-- Conversational AI Widget -->
+              <div class="conversational-ai-widget glass-subcard">
+                <div class="card-title-row">
+                  <h4>Conversational AI</h4>
+                  <div class="sound-wave-icon" title="Voice Channel Active">
+                    <span class="sw-bar"></span>
+                    <span class="sw-bar"></span>
+                    <span class="sw-bar"></span>
+                    <span class="sw-bar"></span>
+                  </div>
+                </div>
+                <div class="ai-speech-bubble" id="dashboard-ai-bubble">
+                  Hi Conversational AI response panel tool ride the subject from government and midlogus and atmndardnes to pay alie both your farmers.
+                </div>
+                <div class="conversational-hero-input">
+                  <input type="text" id="hero-user-input" placeholder="Type a response..." />
+                  <button type="button" id="btn-hero-mic" class="btn-hero-mic-circle" title="Voice Response">
+                    <span class="mic-wave-icon">ılı</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==============================================================
+             SECONDARY VIEW: 💬 Full Console & Crisis Solvers
+             ============================================================== -->
+        <section id="tab-chat" class="tab-pane">
+          <div class="chat-section glass-card" aria-label="Interactive Agent Console">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+              <div class="card-title-group">
+                <span class="icon">💬</span>
+                <h2>Krishi Varta: Vernacular Farm Console</h2>
+              </div>
+              <button type="button" class="btn-back-dashboard btn-primary-pill btn-sm" data-tab="view-dashboard">← Back to Dashboard</button>
+            </div>
+
+        <!-- Real-Life Farmer Crisis Solver -->
+        <div class="crisis-solver-container glass-subcard">
+          <div class="crisis-header">
+            <div class="crisis-title">
+              <span class="crisis-pulse"></span>
+              <strong>⚡ Real-Life Farmer Crisis Solvers:</strong>
+            </div>
+            <span class="crisis-subtext">Get unbiased solutions in 1 click powered by Laya Dual-Brain</span>
+          </div>
+          <div class="crisis-cards-row">
+            <button class="crisis-btn" data-query="A dealer is pushing a ₹2,800 toxic chemical tonic. Should I buy it or is there a low-cost organic alternative?">
+              <span class="crisis-icon">🚨</span>
+              <div class="crisis-btn-content">
+                <span class="crisis-btn-title">Dealer Commission Trap</span>
+                <span class="crisis-btn-sub">₹2,800 tonic vs ₹180 organic saving</span>
+              </div>
+            </button>
+
+            <button class="crisis-btn" data-query="A trader at Indore Mandi is offering only ₹1,900/quintal for soybean. Should I sell today or hold?">
+              <span class="crisis-icon">📉</span>
+              <div class="crisis-btn-content">
+                <span class="crisis-btn-title">Mandi Price Exploitation</span>
+                <span class="crisis-btn-sub">Protect from middleman undercut (+₹550)</span>
+              </div>
+            </button>
+
+            <button class="crisis-btn" data-query="Wheat leaves are turning yellow. Should I apply 2 more bags of urea or is it zinc deficiency?">
+              <span class="crisis-icon">🧪</span>
+              <div class="crisis-btn-content">
+                <span class="crisis-btn-title">Indiscriminate Urea Spray</span>
+                <span class="crisis-btn-sub">Balanced NPK & crop protection</span>
+              </div>
+            </button>
+
+            <button class="crisis-btn" data-query="Tomato leaves show dark concentric rings and yellowing margins. Is this Early Blight disease?">
+              <span class="crisis-icon">📸</span>
+              <div class="crisis-btn-content">
+                <span class="crisis-btn-title">Rapid Leaf Disease Diagnosis</span>
+                <span class="crisis-btn-sub">Gemini 1.5 Flash Vision</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Stream Area -->
+        <div id="chat-messages" class="messages-container" role="log" aria-live="polite">
+          <div class="message assistant-msg glass-subcard">
+            <div class="msg-header">
+              <span class="role-badge reflex-badge">⚡ KisanZess Co-Pilot</span>
+              <span class="timestamp">Ready</span>
+            </div>
+            <div class="msg-body">
+              Hello Rameshwar ji! I am <strong>KisanZess</strong> — your digital agricultural co-pilot. 
+              <br><br>
+              ⚡ <strong>Mandi Prices in 30ms:</strong> Check live APMC rates across Indore, Ujjain, Dewas, Agartala, or Azadpur mandis.<br>
+              🏛️ <strong>Government Schemes:</strong> Explore 40% to 90% verified subsidies tailored to your state, district, and crop.<br>
+              🌱 <strong>Soil Testing (ML):</strong> Pick the best-yield crop and fertilizer mix from your soil's N-P-K report.<br>
+              📸 <strong>Leaf Disease Diagnosis (Gemini 1.5 Flash):</strong> Upload or drag-and-drop an infected leaf photo for instant remedy.<br>
+              🔊 <strong>Voice Readout:</strong> Click the 🔊 button on any message to listen aloud in crystal-clear audio.
+            </div>
+          </div>
+        </div>
+
+        <!-- Input Bar -->
+        <div class="chat-input-bar">
+          <div class="quick-chips">
+            <button class="chip-btn" data-query="What are today's tomato and onion prices in Agartala Mandi?">📈 Agartala Mandi Rates (15ms)</button>
+            <button class="chip-btn" data-query="What government subsidies are available in Punjab on super seeders and wheat?">🏛️ Punjab Subsidy (Gov Schemes)</button>
+            <button class="chip-btn" data-query="Soil test report: N=90, P=42, K=43, pH=6.5, rainfall=180mm. Which crop gives best yield?">🌱 Soil NPK (ML)</button>
+            <button class="chip-btn" data-query="What is today's weather forecast, rainfall probability, and soil moisture in Indore and Agartala?">🌦️ Live Weather & Soil Moisture</button>
+            <button class="chip-btn" data-query="How much government subsidy is provided under the PM-KUSUM Solar Pump scheme?">☀️ Solar Pump Subsidy</button>
+          </div>
+          <form id="chat-form" class="input-form">
+            <label for="leaf-upload" class="btn-attach" title="Upload Leaf Photo for Google Gemini Vision">
+              📸
+              <input type="file" id="leaf-upload" accept="image/*" style="display:none">
+            </label>
+            <button type="button" id="btn-mic" class="btn-mic" title="Speak in English (Voice / STT)" aria-label="Voice input">
+              🎙️
+            </button>
+            <input 
+              type="text" 
+              id="user-input" 
+              class="text-input" 
+              placeholder="Ask in English (e.g. What is the soybean rate in Indore mandi today?)..." 
+              autocomplete="off"
+            >
+            <button type="submit" id="btn-send" class="btn-send" aria-label="Send message">
+              <span>Send</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: 🏛️ State & Crop Schemes Explorer (JEV-Ultrafast Split-Screen Portal) -->
+    <section id="tab-schemes" class="tab-pane">
+      <div class="schemes-portal-container glass-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="icon">🏛️</span>
+            <div>
+              <h2>Government Agricultural Schemes & JEV-Ultrafast Live Portal Harvester</h2>
+              <span class="header-subtitle">Zero-Token Bureaucracy Pruning • Autonomous Government Portal Reader & Comparison Engine</span>
+            </div>
+          </div>
+          
+          <!-- Scope Selector: All India / State / District -->
+          <div class="scope-toggle-group" id="scope-selector-cluster">
+            <span style="font-size:11px; color:var(--c-mint-whisper); font-weight:600; padding:0 4px;">Jurisdiction:</span>
+            <button type="button" class="scope-btn" data-scope="all" id="scope-all">🇮🇳 All India</button>
+            <button type="button" class="scope-btn active" data-scope="state" id="scope-state">🏛️ Madhya Pradesh (State)</button>
+            <button type="button" class="scope-btn" data-scope="district" id="scope-district">📍 Indore (District)</button>
+          </div>
+        </div>
+
+        <!-- Filter Controls & Compare Bar -->
+        <div class="schemes-filter-bar glass-subcard" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:12px; flex:1;">
+            <div class="filter-field" style="min-width:180px;">
+              <label for="filter-state">📍 State:</label>
+              <select id="filter-state" class="custom-select">
+                <option value="All India">🇮🇳 All India</option>
+                <option value="Madhya Pradesh" selected>🌱 Madhya Pradesh</option>
+                <option value="Punjab">🌾 Punjab</option>
+                <option value="Haryana">🚜 Haryana</option>
+                <option value="Uttar Pradesh">🌿 Uttar Pradesh</option>
+                <option value="Maharashtra">🍇 Maharashtra</option>
+                <option value="Rajasthan">🏜️ Rajasthan</option>
+                <option value="Tripura">🎋 Tripura & NE</option>
+              </select>
+            </div>
+
+            <div class="filter-field" style="min-width:160px;">
+              <label for="filter-crop">🌱 Crop:</label>
+              <select id="filter-crop" class="custom-select">
+                <option value="All Crops" selected>🌾 All Crops</option>
+                <option value="Soybean">Soybean</option>
+                <option value="Cotton">Cotton</option>
+                <option value="Wheat">Wheat</option>
+                <option value="Paddy">Paddy</option>
+                <option value="Tomato">Tomato</option>
+              </select>
+            </div>
+
+            <div class="filter-field" style="min-width:170px;">
+              <label for="filter-category">📂 Category:</label>
+              <select id="filter-category" class="custom-select">
+                <option value="all" selected>📋 All Categories</option>
+                <option value="income_support">💰 Direct Income Support (DBT)</option>
+                <option value="farm_machinery">🚜 Farm Machinery & Super Seeder</option>
+                <option value="solar_irrigation">☀️ Solar Pump (KUSUM)</option>
+                <option value="crop_insurance">🛡️ Crop Insurance (PMFBY)</option>
               </select>
             </div>
           </div>
 
-          <!-- Farmer Context Card -->
-          <div class="farmer-profile-banner glass-subcard">
-            <div class="farmer-avatar">👨‍🌾</div>
-            <div class="farmer-info">
-              <div class="farmer-name">रामेश्वर पटेल (Rameshwar Patel) • 4.0 Acres Black Soil</div>
-              <div class="farmer-sub">Indore APMC • Current Crops: <strong>Soybean, Cotton</strong> • pH 7.1</div>
-            </div>
-            <span class="memory-badge">🧠 Khet-Vault Active</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button type="button" id="btn-open-compare" class="btn-primary-pill" style="background:rgba(214,189,152,0.2); border-color:var(--c-almond); color:var(--c-almond);">
+              <span>⚖️ Compare Schemes</span>
+              <span id="compare-badge-count" style="background:var(--c-almond); color:#011207; font-weight:bold; border-radius:50%; width:18px; height:18px; display:inline-flex; align-items:center; justify-content:center; font-size:10px;">0</span>
+            </button>
+            <button type="button" id="btn-apply-scheme-filter" class="btn-primary-pill">
+              <span>🔍 Search</span>
+            </button>
           </div>
+        </div>
 
-          <!-- Real-Life Farmer Crisis Solver (वास्तविक किसान जीवन संकट निवारक) -->
-          <div class="crisis-solver-container glass-subcard">
-            <div class="crisis-header">
-              <div class="crisis-title">
-                <span class="crisis-pulse"></span>
-                <strong>⚡ वास्तविक किसान संकट निवारक (Real-Life Farmer Crisis Solvers):</strong>
+        <!-- JEV-Ultrafast Split-Screen Grid (Matching Browser-Use Mockup) -->
+        <div class="jev-split-grid">
+          
+          <!-- LEFT COLUMN: Illustrated Scheme Action Cards & Laya Assistant -->
+          <div class="jev-schemes-left">
+            <div class="schemes-grid-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+              <span id="schemes-count-badge" class="badge-count">Verified Schemes: 4 Active</span>
+              <span class="badge-source">Source: pmkisan.gov.in • agrimachinery.nic.in • 0 LLM Tokens</span>
+            </div>
+
+            <!-- Dynamic or Illustrated Visual Cards -->
+            <div id="schemes-cards-container" class="schemes-visual-list">
+              
+              <!-- Card 1: PM-Kisan (Illustrated) -->
+              <div class="scheme-visual-card" data-scheme-id="pm_kisan" data-scope="all state">
+                <div class="scheme-card-header">
+                  <div class="scheme-icon-box">💰</div>
+                  <div class="scheme-meta-wrap">
+                    <div class="scheme-title-row">
+                      <h4>PM-Kisan + MP Mukhyamantri Kalyan Yojana</h4>
+                      <span class="badge-gain">Verified</span>
+                    </div>
+                    <p class="scheme-sub-text">Direct Benefit Transfer (DBT) • Central (₹6,000) + MP State (₹4,000)</p>
+                  </div>
+                  <label class="scheme-compare-check">
+                    <input type="checkbox" class="cmp-cb" data-id="pm_kisan" data-name="PM-Kisan + MP Kalyan" data-grant="₹10,000 / Year" data-cat="Direct Cash (DBT)" data-rules="Aadhaar e-KYC + Khasra Record" />
+                    Compare
+                  </label>
+                </div>
+                <div class="scheme-card-footer">
+                  <div>
+                    <span class="scheme-grant-label">Annual Cash Benefit</span>
+                    <span class="scheme-grant-metric">₹10,000 / Year</span>
+                  </div>
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn-secondary-pill btn-sm btn-open-jev" data-portal="pmkisan">🌐 View in JEV</button>
+                    <button type="button" class="btn-primary-pill btn-sm">Application Status</button>
+                  </div>
+                </div>
               </div>
-              <span class="crisis-subtext">1-क्लिक में Laya Dual-Brain से निष्पक्ष समाधान प्राप्त करें</span>
-            </div>
-            <div class="crisis-cards-row">
-              <button class="crisis-btn" data-query="दुकानदार ₹2,800 का जहरीला केमिकल टॉनिक बेच रहा है। क्या मैं खरीदूँ या कोई सस्ता जैविक उपाय है?">
-                <span class="crisis-icon">🚨</span>
-                <div class="crisis-btn-content">
-                  <span class="crisis-btn-title">दुकानदार का कमीशन ट्रैप</span>
-                  <span class="crisis-btn-sub">₹2,800 दवा vs जैविक ₹180 बचत</span>
-                </div>
-              </button>
 
-              <button class="crisis-btn" data-query="इंदौर मंडी में आढ़ती सोयाबीन ₹1,900/क्विंटल दे रहा है। क्या आज ही बेचूँ या रोकूँ?">
-                <span class="crisis-icon">📉</span>
-                <div class="crisis-btn-content">
-                  <span class="crisis-btn-title">मंडी में औने-पौने दाम</span>
-                  <span class="crisis-btn-sub">आढ़ती की हेराफेरी से बचाव (+₹550)</span>
+              <!-- Card 2: SMAM Mechanization (Illustrated) -->
+              <div class="scheme-visual-card" data-scheme-id="smam" data-scope="state district">
+                <div class="scheme-card-header">
+                  <div class="scheme-icon-box">🚜</div>
+                  <div class="scheme-meta-wrap">
+                    <div class="scheme-title-row">
+                      <h4>SMAM Farm Mechanization & Super Seeder Subsidy</h4>
+                      <span class="badge-gain" style="background:rgba(214,189,152,0.2); color:var(--c-almond);">50% Subsidy</span>
+                    </div>
+                    <p class="scheme-sub-text">MP Agricultural Engineering • 50% grant on Super Seeder, Rotavator & Happy Seeder</p>
+                  </div>
+                  <label class="scheme-compare-check">
+                    <input type="checkbox" class="cmp-cb" data-id="smam" data-name="SMAM Super Seeder" data-grant="50% (Max ₹45,000)" data-cat="Farm Equipment" data-rules="Small/Marginal Farmer (<5 acres)" />
+                    Compare
+                  </label>
                 </div>
-              </button>
-
-              <button class="crisis-btn" data-query="गेहूं की पत्तियां पीली पड़ रही हैं। क्या 2 बोरी यूरिया और डाल दूँ या जिंक की कमी है?">
-                <span class="crisis-icon">🧪</span>
-                <div class="crisis-btn-content">
-                  <span class="crisis-btn-title">यूरिया का अंधाधुंध छिड़काव</span>
-                  <span class="crisis-btn-sub">संतुलित NPK व फसल सुरक्षा</span>
+                <div class="scheme-card-footer">
+                  <div>
+                    <span class="scheme-grant-label">Government Subsidy</span>
+                    <span class="scheme-grant-metric">₹45,000 Grant</span>
+                  </div>
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn-secondary-pill btn-sm btn-open-jev" data-portal="agrimachinery">🌐 View in JEV</button>
+                    <button type="button" class="btn-primary-pill btn-sm">Apply Scheme Card</button>
+                  </div>
                 </div>
-              </button>
-
-              <button class="crisis-btn" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह अगेती झुलसा (Early Blight) रोग है?">
-                <span class="crisis-icon">📸</span>
-                <div class="crisis-btn-content">
-                  <span class="crisis-btn-title">पत्ती रोग त्वरित निदान</span>
-                  <span class="crisis-btn-sub">Gemini 1.5 Flash विजन</span>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          <!-- Chat Stream Area -->
-          <div id="chat-messages" class="messages-container" role="log" aria-live="polite">
-            <div class="message assistant-msg glass-subcard">
-              <div class="msg-header">
-                <span class="role-badge reflex-badge">⚡ KisanZess Co-Pilot</span>
-                <span class="timestamp">Ready</span>
               </div>
-              <div class="msg-body">
-                नमस्ते रामेश्वर जी! मैं <strong>KisanZess</strong> हूँ — आपका बहुभाषी डिजिटल कृषि सलाहकार। 
-                <br><br>
-                ⚡ <strong>30ms में मंडी भाव:</strong> अगरतला, इंदौर, या आज़ादपुर मंडी के ताज़ा दाम जानें।<br>
-                🌱 <strong>मृदा परीक्षण (ML):</strong> अपनी मिट्टी की N-P-K रिपोर्ट से सही फसल चुनें।<br>
-                📸 <strong>पत्ती रोग निदान (Gemini 1.5 Flash):</strong> रोगग्रस्त पत्ती की फोटो भेजें या ड्रैग-एंड-ड्रॉप करें।<br>
-                🔊 <strong>आवाज में सुनें:</strong> किसी भी जवाब के ऊपर बने 🔊 बटन पर क्लिक करके हिंदी में सुनें।<br>
-                🏛️ <strong>कृषि पंचायत:</strong> महंगे कीटनाशक बनाम तुड़ाई के व्यापारिक निर्णय पर 4 विशेषज्ञों की राय लें।
+
+              <!-- Card 3: PM-KUSUM Solar (Illustrated) -->
+              <div class="scheme-visual-card" data-scheme-id="kusum" data-scope="all state district">
+                <div class="scheme-card-header">
+                  <div class="scheme-icon-box">☀️💧</div>
+                  <div class="scheme-meta-wrap">
+                    <div class="scheme-title-row">
+                      <h4>PM-KUSUM Component-B (5 HP Solar Pump)</h4>
+                      <span class="badge-gain" style="background:rgba(80,200,120,0.2); color:#50C878;">60% Central + State</span>
+                    </div>
+                    <p class="scheme-sub-text">MP Urja Vikas Nigam • Solar irrigation replacing diesel pumps with zero electric bills</p>
+                  </div>
+                  <label class="scheme-compare-check">
+                    <input type="checkbox" class="cmp-cb" data-id="kusum" data-name="PM-KUSUM Solar Pump" data-grant="60% Subsidy (Savings ₹32,000/yr)" data-cat="Solar Irrigation" data-rules="Irrigation Well / Borewell" />
+                    Compare
+                  </label>
+                </div>
+                <div class="scheme-card-footer">
+                  <div>
+                    <span class="scheme-grant-label">Diesel Fuel Savings</span>
+                    <span class="scheme-grant-metric">₹32,000 / Year</span>
+                  </div>
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn-secondary-pill btn-sm btn-open-jev" data-portal="kusum">🌐 View in JEV</button>
+                    <button type="button" class="btn-primary-pill btn-sm">View Details</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Interactive Laya AI Q&A Console -->
+            <div class="laya-gov-chat-dock glass-subcard" style="margin-top:14px; padding:12px; border-radius:12px; border:1px solid rgba(80,200,120,0.3);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="pulse-dot green"></span>
+                  <strong style="font-size:12px; color:#FFFFFF;">🌾 Laya Vernacular Portal Reader AI</strong>
+                </div>
+                <span style="font-size:10px; color:var(--c-almond); font-family:var(--font-mono);">Sub-35ms Gazette Scanner</span>
+              </div>
+              <div id="laya-portal-chat-bubble" style="padding:10px; border-radius:8px; background:rgba(0,18,7,0.7); font-size:12px; color:var(--c-mint-whisper); margin-bottom:8px; line-height:1.5;">
+                💬 <em>"Hello Rameshwar ji! JEV-Ultrafast has live-scanned <strong>pmkisan.gov.in</strong> and <strong>agrimachinery.nic.in</strong>. For your 4.0-acre landholding, a 50% (₹45,000) subsidy is available on Super Seeders. Would you like to view the required documents checklist?"</em>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <input type="text" id="input-laya-portal-q" placeholder="Ask any rule from government portals (e.g. Documents for Super Seeder?)..." style="flex:1; background:rgba(0,0,0,0.4); border:1px solid rgba(80,200,120,0.3); border-radius:8px; padding:6px 10px; color:#fff; font-size:12px;" />
+                <button type="button" id="btn-ask-laya-portal" class="btn-primary-pill btn-sm">Ask</button>
+                <button type="button" id="btn-mic-laya-portal" class="icon-btn" title="Ask via Voice">🎙️</button>
               </div>
             </div>
           </div>
 
-          <!-- Input Bar -->
-          <div class="chat-input-bar">
-            <div class="quick-chips">
-              <button class="chip-btn" data-query="अगरतला मंडी में आज टमाटर और प्याज का क्या भाव चल रहा है?">📈 अगरतला मंडी भाव (15ms)</button>
-              <button class="chip-btn" data-query="Soil test report: N=90, P=42, K=43, pH=6.5, rainfall=180mm. Which crop gives best yield?">🌱 Soil NPK (ML)</button>
-              <button class="chip-btn" data-query="धान की फसल में यूरिया और डीएपी कितना डालें? मिट्टी में नाइट्रोजन 40 है।">🧪 खाद की खुराक (Fertilizer)</button>
-              <button class="chip-btn" data-query="टमाटर के पत्तों पर काले गोल छल्ले और पीलापन दिख रहा है। क्या यह झुलसा रोग है?">📸 पत्ती रोग (Gemini Vision)</button>
-              <button class="chip-btn" data-query="टमाटर में सफ़ेद मक्खी लग रही है और मंडी में भाव ₹3,800 क्विंटल है। क्या ₹1,800 की महंगी कीटनाशक दवा डालें या जल्दी तुड़ाई करके बेचें?">🏛️ कृषि पंचायत बहस</button>
+          <!-- RIGHT COLUMN: JEV-Ultrafast Live Browser Frame -->
+          <div class="jev-browser-frame">
+            <div class="jev-browser-topbar">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="browser-window-dots">
+                  <span class="dot-red"></span>
+                  <span class="dot-amber"></span>
+                  <span class="dot-green"></span>
+                </div>
+                <div class="jev-browser-tabs">
+                  <div class="jev-tab">
+                    <span>🌐</span>
+                    <span id="jev-active-tab-name">pmkisan.gov.in</span>
+                  </div>
+                </div>
+              </div>
+              <span style="font-size:10px; font-family:var(--font-mono); color:var(--c-emerald-green); background:rgba(80,200,120,0.15); padding:2px 6px; border-radius:4px;">
+                ⚡ JEV-Ultrafast Live
+              </span>
             </div>
-            <form id="chat-form" class="input-form">
-              <label for="leaf-upload" class="btn-attach" title="Upload Leaf Photo for Google Gemini Vision">
-                📸
-                <input type="file" id="leaf-upload" accept="image/*" style="display:none">
-              </label>
-              <input 
-                type="text" 
-                id="user-input" 
-                class="text-input" 
-                placeholder="अपनी भाषा में पूछें (जैसे: इंदौर मंडी में सोयाबीन का भाव क्या है?)..." 
-                autocomplete="off"
-              >
-              <button type="submit" id="btn-send" class="btn-send" aria-label="Send message">
-                <span>Send</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-              </button>
-            </form>
-          </div>
-        </section>
 
-        <!-- Right Column: Live Reflex Telemetry & Benchmark Comparison -->
-        <section class="telemetry-section glass-card" aria-label="Real-time Metrics">
-          <div class="card-header">
+            <div class="jev-address-bar">
+              <button type="button" style="color:rgba(209,242,235,0.7); background:none; border:none; cursor:pointer;" onclick="reloadJevPortal()">↻</button>
+              <input type="text" id="jev-url-address" class="browser-url-input" value="https://pmkisan.gov.in/portal/farmer_benefits.aspx" readonly />
+              <span style="font-size:10px; color:var(--c-emerald-green); font-family:var(--font-mono);">0 Token</span>
+            </div>
+
+            <!-- Viewport with Animated Scanner Beam -->
+            <div class="jev-viewport custom-scroll" id="jev-viewport-screen">
+              <div class="scanner-beam"></div>
+              
+              <!-- Gov Portal Header -->
+              <div style="border-bottom:2px solid #0B6E4F; padding-bottom:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:22px;">🇮🇳</span>
+                  <div>
+                    <div style="font-size:11px; font-weight:800; color:#1f2937; text-transform:uppercase;">Ministry of Agriculture & Farmers Welfare</div>
+                    <div style="font-size:9px; color:#4b5563;">Government of India • Official Schemes Portal</div>
+                  </div>
+                </div>
+                <span style="font-size:9px; background:#dcfce7; color:#166534; font-weight:bold; padding:2px 6px; border-radius:4px;">Verified Portal</span>
+              </div>
+
+              <!-- Scraped Content Display -->
+              <div id="jev-portal-rendered-body" style="font-size:11px; color:#374151; line-height:1.5;">
+                <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; padding:10px; margin-bottom:10px;">
+                  <strong style="color:#065f46; display:block; margin-bottom:4px;">Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)</strong>
+                  <p style="margin:0 0 6px 0;">All landholding farmer families having cultivable landholding in their names are eligible. DBT financial benefit of ₹6,000/yr in 3 installments.</p>
+                  <div style="display:flex; gap:6px; font-family:var(--font-mono); font-size:9px;">
+                    <span style="background:#d1fae5; color:#065f46; padding:2px 6px; border-radius:3px;">eKYC: Verified</span>
+                    <span style="background:#dbeafe; color:#1e40af; padding:2px 6px; border-radius:3px;">Aadhaar Seeded: Yes</span>
+                  </div>
+                </div>
+
+                <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:10px;">
+                  <strong style="color:#92400e; display:block; margin-bottom:4px;">MP Mukhyamantri Kisan Kalyan Yojana (Top-Up)</strong>
+                  <p style="margin:0;">MP State grants additional ₹4,000/year to all PM-Kisan registered farmers across MP districts including Indore.</p>
+                </div>
+
+                <!-- JEV Telemetry Badge Inside Viewport -->
+                <div style="margin-top:12px; background:#0f172a; border:1px solid #10b981; border-radius:6px; padding:8px; display:flex; justify-content:space-between; align-items:center; font-family:var(--font-mono); font-size:10px; color:#34d399;">
+                  <span>⚡ JEV: 24,180 words pruned → 3 rules extracted</span>
+                  <span style="color:#fff;">14.2ms</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- JEV Bottom Scraper Telemetry -->
+            <div style="background:#000d05; padding:10px 14px; border-top:1px solid rgba(80,200,120,0.2); display:flex; justify-content:space-between; font-size:10px; font-family:var(--font-mono); color:var(--c-mint-whisper);">
+              <span>HTML: 148.6 KB</span>
+              <span style="color:var(--c-emerald-green);">Pruned: 99.4%</span>
+              <span style="color:var(--c-almond);">Payload: 840B</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Side-by-Side Scheme Comparison Modal -->
+    <div id="compare-schemes-modal" class="compare-modal-backdrop">
+      <div class="compare-modal-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(80,200,120,0.3); padding-bottom:12px; margin-bottom:14px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:20px;">⚖️</span>
+            <h3 style="font-size:16px; font-weight:800; color:#FFFFFF; margin:0;">Direct Government Scheme Comparison</h3>
+          </div>
+          <button type="button" id="btn-close-compare-modal" class="btn-sidebar-close">✕</button>
+        </div>
+
+        <p style="font-size:12px; color:var(--c-mint-whisper); margin-bottom:14px;">
+          Comparative analysis of selected government schemes based on your farm profile (4.0 Acres, Indore, Madhya Pradesh):
+        </p>
+
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">
+            <thead>
+              <tr style="background:rgba(0,18,7,0.8); border-bottom:1px solid rgba(80,200,120,0.3); color:var(--c-mint-whisper);">
+                <th style="padding:10px;">Attribute</th>
+                <th id="modal-cmp-th-1" style="padding:10px; color:var(--c-emerald-green); font-weight:bold;">Scheme 1</th>
+                <th id="modal-cmp-th-2" style="padding:10px; color:var(--c-almond); font-weight:bold;">Scheme 2</th>
+              </tr>
+            </thead>
+            <tbody style="color:#FFFFFF;">
+              <tr style="border-bottom:1px solid rgba(80,200,120,0.15);">
+                <td style="padding:10px; color:var(--c-mint-whisper);">Scheme Name</td>
+                <td id="modal-cmp-name-1" style="padding:10px; font-weight:bold;">PM-Kisan + MP Kalyan</td>
+                <td id="modal-cmp-name-2" style="padding:10px; font-weight:bold;">SMAM Farm Mechanization</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(80,200,120,0.15);">
+                <td style="padding:10px; color:var(--c-mint-whisper);">Total Grant Amount</td>
+                <td id="modal-cmp-grant-1" style="padding:10px; color:var(--c-emerald-green); font-weight:bold;">₹10,000 / Year</td>
+                <td id="modal-cmp-grant-2" style="padding:10px; color:var(--c-emerald-green); font-weight:bold;">50% (Max ₹45,000)</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(80,200,120,0.15);">
+                <td style="padding:10px; color:var(--c-mint-whisper);">Category</td>
+                <td id="modal-cmp-cat-1" style="padding:10px;">Direct Cash Benefit (DBT)</td>
+                <td id="modal-cmp-cat-2" style="padding:10px;">Farm Machinery (Super Seeder)</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(80,200,120,0.15);">
+                <td style="padding:10px; color:var(--c-mint-whisper);">Eligibility Rules</td>
+                <td id="modal-cmp-rules-1" style="padding:10px;">Aadhaar e-KYC + Khasra Record</td>
+                <td id="modal-cmp-rules-2" style="padding:10px;">Small/Marginal Farmer (&lt;5 acres)</td>
+              </tr>
+              <tr>
+                <td style="padding:10px; color:var(--c-mint-whisper);">Disbursement Speed</td>
+                <td style="padding:10px; color:var(--c-emerald-green); font-family:var(--font-mono);">&lt; 7 Days (DBT)</td>
+                <td style="padding:10px; color:var(--c-almond); font-family:var(--font-mono);">15-30 Days (Dealer Invoice)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(80,200,120,0.2); display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:11px; color:var(--c-almond);">💡 Farmers can benefit from both schemes simultaneously!</span>
+          <button type="button" id="btn-done-compare-modal" class="btn-primary-pill btn-sm">Review Complete</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Tab 3: 🌱 Soil NPK ML & Live Agro-Weather -->
+    <section id="tab-soil-weather" class="tab-pane">
+      <div class="two-column-grid">
+        <!-- Left: Soil NPK ML Model -->
+        <div class="glass-card" style="padding: 20px;">
+          <div class="card-header" style="margin-bottom: 14px;">
+            <div class="card-title-group">
+              <span class="icon">🌱</span>
+              <div>
+                <h2>Soil Testing & Crop Suitability (Soil & Fert ML)</h2>
+                <span class="header-subtitle">l-data-seT---ML • 99.1% Random Forest Accuracy</span>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:13px; color:var(--c-mint-whisper); margin-bottom:14px;">Set soil N-P-K, pH, and rainfall to discover the top recommended crops among 22 varieties:</p>
+          
+          <form id="soil-ml-form" class="soil-form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+            <div class="slider-group">
+              <div class="slider-header" style="display:flex; justify-content:space-between; font-size:12px;">
+                <label for="input-n">Nitrogen (N)</label>
+                <span class="slider-val" id="val-n" style="color:var(--c-emerald-green); font-weight:bold;">90 kg/ha</span>
+              </div>
+              <input type="range" id="input-n" min="0" max="140" value="90" class="custom-range" style="width:100%;">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header" style="display:flex; justify-content:space-between; font-size:12px;">
+                <label for="input-p">Phosphorus (P)</label>
+                <span class="slider-val" id="val-p" style="color:var(--c-emerald-green); font-weight:bold;">42 kg/ha</span>
+              </div>
+              <input type="range" id="input-p" min="5" max="145" value="42" class="custom-range" style="width:100%;">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header" style="display:flex; justify-content:space-between; font-size:12px;">
+                <label for="input-k">Potassium (K)</label>
+                <span class="slider-val" id="val-k" style="color:var(--c-emerald-green); font-weight:bold;">43 kg/ha</span>
+              </div>
+              <input type="range" id="input-k" min="5" max="205" value="43" class="custom-range" style="width:100%;">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header" style="display:flex; justify-content:space-between; font-size:12px;">
+                <label for="input-ph">pH Level</label>
+                <span class="slider-val" id="val-ph" style="color:var(--c-emerald-green); font-weight:bold;">6.5</span>
+              </div>
+              <input type="range" id="input-ph" min="3.5" max="9.9" step="0.1" value="6.5" class="custom-range" style="width:100%;">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header" style="display:flex; justify-content:space-between; font-size:12px;">
+                <label for="input-rainfall">Rainfall (mm)</label>
+                <span class="slider-val" id="val-rainfall" style="color:var(--c-emerald-green); font-weight:bold;">180 mm</span>
+              </div>
+              <input type="range" id="input-rainfall" min="20" max="300" value="180" class="custom-range" style="width:100%;">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header" style="display:flex; justify-content:space-between; font-size:12px;">
+                <label for="input-temp">Temp (°C)</label>
+                <span class="slider-val" id="val-temp" style="color:var(--c-emerald-green); font-weight:bold;">24.5 °C</span>
+              </div>
+              <input type="range" id="input-temp" min="8" max="45" step="0.5" value="24.5" class="custom-range" style="width:100%;">
+            </div>
+
+            <div style="grid-column: 1 / -1; display:flex; gap:8px; margin-top:8px;">
+              <button type="submit" id="btn-run-crop-ml" class="btn-primary-pill" style="flex:1;">
+                <span>🌱 Predict Crop (ML)</span>
+              </button>
+              <button type="button" id="btn-run-fert-ml" class="btn-secondary-pill" style="flex:1;">
+                <span>🧪 Fertilizer Dose</span>
+              </button>
+            </div>
+          </form>
+
+          <div id="soil-ml-output" class="ml-output-container" style="margin-top:14px; padding:12px; background:rgba(16, 35, 34, 0.7); border-radius:8px; border:1px solid rgba(80,200,120,0.3);">
+            <div class="empty-state">
+              <div class="empty-icon" style="font-size:24px;">🌱</div>
+              <p style="font-size:12px; color:var(--c-almond); margin:4px 0 0 0;">Adjust sliders or click Predict to test ML models.</p>
+            </div>
+          </div>
+
+          <button type="button" id="btn-send-soil-chat" class="btn-primary-pill" style="width:100%; margin-top:14px; justify-content:center;">
+            <span>💬 Send Soil Recommendation to Chat</span>
+          </button>
+        </div>
+
+        <!-- Right: Live Weather & Rootzone Moisture -->
+        <div class="glass-card" style="padding: 20px;">
+          <div class="card-header" style="margin-bottom: 14px;">
+            <div class="card-title-group">
+              <span class="icon">🌦️</span>
+              <div>
+                <h2>Live Agricultural Weather & Soil Moisture (Agro-Weather)</h2>
+                <span class="header-subtitle">Open-Meteo ECMWF Global Satellite Data</span>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:13px; color:var(--c-mint-whisper); margin-bottom:14px;">Real-time weather parameters and rootzone soil moisture index:</p>
+
+          <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; margin-bottom:12px;">
+            <button type="button" class="weather-city-btn chip-btn active" data-city="Indore">📍 Indore</button>
+            <button type="button" class="weather-city-btn chip-btn" data-city="Agartala">📍 Agartala</button>
+            <button type="button" class="weather-city-btn chip-btn" data-city="Kolar">📍 Kolar</button>
+            <button type="button" class="weather-city-btn chip-btn" data-city="Ludhiana">📍 Ludhiana</button>
+            <button type="button" class="weather-city-btn chip-btn" data-city="Patna">📍 Patna</button>
+          </div>
+
+          <div id="weather-card-display" style="background:rgba(26,54,54,0.6); padding:16px; border-radius:12px; border:1px solid rgba(80,200,120,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span id="weather-city-name" style="font-size:16px; font-weight:800; color:#FFFFFF;">Indore, Madhya Pradesh</span>
+                <div id="weather-condition" style="font-size:12px; color:var(--c-mint-whisper); margin-top:2px;">🌤️ Partly Cloudy • Rain Probability: 5%</div>
+              </div>
+              <div style="text-align:right;">
+                <div id="weather-temp" style="font-size:24px; font-weight:800; color:var(--c-emerald-green);">28.4°C</div>
+                <div id="weather-humidity" style="font-size:11px; color:var(--c-almond);">Humidity: 48%</div>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:14px;">
+              <div style="background:rgba(11,110,79,0.3); padding:12px; border-radius:8px; border:1px solid rgba(80,200,120,0.25);">
+                <div style="font-size:10px; text-transform:uppercase; color:var(--c-almond);">Rootzone Soil Moisture</div>
+                <div id="weather-soil-moist" style="font-size:18px; font-weight:700; color:var(--c-emerald-green); margin-top:2px;">0.28 m³/m³</div>
+                <div style="font-size:11px; color:#94a3b8;">Optimal</div>
+              </div>
+              <div style="background:rgba(26,54,54,0.7); padding:12px; border-radius:8px; border:1px solid rgba(214,189,152,0.25);">
+                <div style="font-size:10px; text-transform:uppercase; color:var(--c-almond);">Wind Speed</div>
+                <div id="weather-wind" style="font-size:18px; font-weight:700; color:var(--c-mint-whisper); margin-top:2px;">9.2 km/h</div>
+                <div style="font-size:11px; color:#94a3b8;">Calm Breeze</div>
+              </div>
+            </div>
+
+            <div style="margin-top:14px; padding:12px; background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.4); border-radius:8px;">
+              <div style="font-size:12px; font-weight:700; color:#22c55e;">✅ Safe Pesticide Spray Window Active:</div>
+              <div style="font-size:11px; color:var(--c-mint-whisper); margin-top:2px;">Rainfall probability is under 5% and wind speed is below 12 km/h for the next 6 hours. Spraying can be safely executed.</div>
+            </div>
+          </div>
+
+          <button type="button" id="btn-send-weather-chat" class="btn-primary-pill" style="width:100%; margin-top:14px; justify-content:center;">
+            <span>💬 Send Weather Advisory to Chat</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: ⚖️ Krishi Panchayat (4-Agent WarRoom) -->
+    <section id="tab-panchayat" class="tab-pane">
+      <div class="glass-card" style="padding: 20px;">
+        <div class="card-header" style="margin-bottom: 14px;">
+          <div class="card-title-group">
+            <span class="icon">⚖️</span>
+            <div>
+              <h2>Digital Krishi Panchayat (4-Agent Deliberative Council)</h2>
+              <span class="header-subtitle">OpenZess Core • Chemical Cost vs Mandi Profit Unbiased Economic Synthesis</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-bottom:16px;">
+          <div class="panchayat-agent-card glass-subcard" style="padding:14px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:24px;">🌿</span>
+              <div>
+                <strong style="font-size:14px; color:#FFFFFF;">Dr. Krishi (Plant Pathologist)</strong>
+                <div id="panchayat-op-agri" style="font-size:12px; color:var(--c-mint-whisper); margin-top:4px;">Evaluates pathogen strain, active chemical potency, and Pre-Harvest Interval (PHI).</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panchayat-agent-card glass-subcard" style="padding:14px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:24px;">💰</span>
+              <div>
+                <strong style="font-size:14px; color:#FFFFFF;">Mandi Vyapari (Market Economist)</strong>
+                <div id="panchayat-op-mandi" style="font-size:12px; color:var(--c-mint-whisper); margin-top:4px;">Calculates direct ROI comparing pesticide expense against live APMC mandi realization.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panchayat-agent-card glass-subcard" style="padding:14px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:24px;">🧪</span>
+              <div>
+                <strong style="font-size:14px; color:#FFFFFF;">Mitti Mitra (Soil & Bio Agronomist)</strong>
+                <div id="panchayat-op-soil" style="font-size:12px; color:var(--c-mint-whisper); margin-top:4px;">Protects soil microbiomes with neem extract and organic bio-alternatives.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sarpanch Verdict -->
+        <div class="sarpanch-consensus-box glass-subcard" style="padding:16px; border:1px solid rgba(80,200,120,0.35); border-radius:10px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <span style="font-size:26px;">⚖️</span>
+            <div>
+              <h4 style="margin:0; font-size:15px; color:#FFFFFF; font-weight:800;">Gram Sarpanch Final Synthesis</h4>
+            </div>
+          </div>
+          <div id="panchayat-synthesis" style="font-size:13px; color:var(--c-mint-whisper); line-height:1.5;">
+            <em>Click 'Run Simulation' below or ask in chat to view the deliberative council's consensus.</em>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:16px;">
+          <button type="button" id="btn-simulate-panchayat" class="btn-primary-pill" style="flex:1; justify-content:center;">
+            <span>🏛️ Run Simulation</span>
+          </button>
+          <button type="button" id="btn-send-panchayat-chat" class="btn-secondary-pill" style="flex:1; justify-content:center;">
+            <span>💬 Send Verdict to Chat</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: 📊 Telemetry, Savings & Khet-Vault Memory -->
+    <section id="tab-telemetry" class="tab-pane">
+      <div class="two-column-grid">
+        <!-- Left: Telemetry & KPI Grid -->
+        <div class="glass-card" style="padding: 20px;">
+          <div class="card-header" style="margin-bottom: 14px;">
             <div class="card-title-group">
               <span class="icon">📊</span>
-              <h2>KisanZess vs Traditional LLM</h2>
+              <div>
+                <h2>System 1 Reflex Speed & Farmer ROI (Telemetry & ROI)</h2>
+                <span class="header-subtitle">Sub-35ms Non-Autoregressive Laya Pipeline</span>
+              </div>
             </div>
             <button id="btn-refresh-telemetry" class="icon-btn" title="Refresh metrics">⟳</button>
           </div>
 
-          <!-- Kisan Wealth & ROI Protector (किसान बचत एवं मुनाफा मीटर) -->
-          <div class="farmer-wealth-card glass-subcard">
+          <!-- Farmer Wealth Protector -->
+          <div class="farmer-wealth-card glass-subcard" style="margin-bottom: 16px;">
             <div class="wealth-header">
               <span class="wealth-icon">💰</span>
               <div>
-                <h3 class="wealth-title">किसान बचत एवं सुरक्षा मीटर (Farmer Wealth Protector)</h3>
-                <p class="wealth-subtitle">Laya Dual-Brain द्वारा रोकी गई प्रत्यक्ष फिजूलखर्ची</p>
+                <h3 class="wealth-title">Farmer Wealth Protector Meter</h3>
+                <p class="wealth-subtitle">Direct wasteful expenses prevented by Laya Dual-Brain</p>
               </div>
             </div>
             <div class="wealth-metrics-grid">
               <div class="wealth-stat">
                 <span class="wealth-number text-green" id="wealth-saved">₹3,820</span>
-                <span class="wealth-desc">बचाई गई औसत लागत / एकड़</span>
+                <span class="wealth-desc">Average Cost Saved / Acre</span>
               </div>
               <div class="wealth-stat">
                 <span class="wealth-number text-accent" id="wealth-arbitrage">▲ +₹550</span>
-                <span class="wealth-desc">मंडी आर्बिट्राज अतिरिक्त लाभ/क्विंटल</span>
+                <span class="wealth-desc">Mandi Arbitrage Extra Profit/Quintal</span>
               </div>
               <div class="wealth-stat">
                 <span class="wealth-number text-cyan" id="wealth-latency">&lt; 35ms</span>
-                <span class="wealth-desc">ऑफ़लाइन रिफ्लेक्स गति ($0 बिल)</span>
+                <span class="wealth-desc">Offline Reflex Speed ($0 API Bill)</span>
               </div>
             </div>
           </div>
 
           <!-- Metric KPI Cards -->
-          <div class="kpi-grid">
+          <div class="kpi-grid" style="margin-bottom: 16px;">
             <div class="kpi-card glass-subcard">
               <div class="kpi-label">Reflex Speedup</div>
               <div class="kpi-value text-accent" id="metric-speedup">68.4x</div>
@@ -260,9 +1033,14 @@
             </div>
           </div>
 
-          <!-- Architecture Latency Comparison Bars -->
+          <!-- Latency Comparison Bars -->
           <div class="benchmark-comparison-panel glass-subcard">
-            <h3 class="panel-subtitle">Average Latency Comparison (ms)</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <h3 class="panel-subtitle" style="margin:0;">Average Latency Comparison (ms)</h3>
+              <button id="btn-run-benchmark" class="btn-primary-pill btn-sm" title="Run full benchmark test">
+                <span>⚡ Benchmark</span>
+              </button>
+            </div>
             
             <div class="bar-row">
               <div class="bar-label-group">
@@ -294,374 +1072,43 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Live Step Inspection Log -->
-          <div class="live-trace-panel glass-subcard">
-            <h3 class="panel-subtitle">Latest Decision Trace (Dual-Brain)</h3>
-            <div id="step-trace-log" class="trace-log-list">
-              <div class="trace-item s1-trace">
-                <div class="trace-dot"></div>
-                <div class="trace-content">
-                  <span class="trace-badge">⚡ System 1 Reflex</span>
-                  <span class="trace-text">Ready for vernacular farmer query</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Available Tools Panel -->
-          <div class="tools-overview-panel glass-subcard">
-            <h3 class="panel-subtitle">Registered Agricultural Modules</h3>
-            <div id="tools-pill-container" class="tools-pill-list">
-              <span class="tool-pill">📈 mandi_price (APMC Sub-15ms)</span>
-              <span class="tool-pill">🌱 crop_recommendation (22 Crops ML)</span>
-              <span class="tool-pill">🧪 fertilizer_schedule (NPK Deficit)</span>
-              <span class="tool-pill">📸 gemini_leaf_vision (1.5 Flash)</span>
-              <span class="tool-pill">🏛️ krishi_panchayat (4-Agent WarRoom)</span>
-              <span class="tool-pill">🧠 khet_vault (Persistent Memory)</span>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <!-- Tab 2: Soil NPK & Satellite Earth Map (from l-data-seT---ML) -->
-    <div id="tab-soil-ml" class="tab-pane">
-      <div class="soil-studio-grid">
-        <!-- Left: Sliders Form Card -->
-        <section class="glass-card soil-inputs-card">
-          <div class="card-header">
+        <!-- Right: Khet-Vault Memory & Decision Trace -->
+        <div class="glass-card" style="padding: 20px;">
+          <div class="card-header" style="margin-bottom: 14px;">
             <div class="card-title-group">
-              <span class="icon">🧪</span>
-              <h2>Empirical Soil & Climate Inputs (l-data-seT---ML)</h2>
+              <span class="icon">📜</span>
+              <div>
+                <h2>Khet-Vault: Auditable FARM_MEMORY.md</h2>
+                <span class="header-subtitle">Zero Amnesia Persistent Memory Engine</span>
+              </div>
             </div>
-            <div class="ml-subtoggle-group" style="display: flex; gap: 6px;">
-              <button type="button" id="subtab-crop-btn" class="nav-tab active" style="padding: 4px 12px; font-size: 11px;">🌱 Crop ML</button>
-              <button type="button" id="subtab-fert-btn" class="nav-tab" style="padding: 4px 12px; font-size: 11px;">🧪 Fertilizer ML</button>
-            </div>
+            <button type="button" id="btn-reload-memory" class="icon-btn" title="Reload Memory">↺</button>
           </div>
-          <p class="section-desc">Adjust soil parameters or click any regional hub on the satellite map to auto-fill agro-climatic values.</p>
-          
-          <!-- Crop Form -->
-          <form id="soil-ml-form" class="soil-form-grid">
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="input-n">Nitrogen (N) Ratio</label>
-                <span class="slider-val" id="val-n">90 kg/ha</span>
-              </div>
-              <input type="range" id="input-n" min="0" max="140" value="90" class="custom-range">
-            </div>
+          <p style="font-size:12px; color:var(--c-mint-whisper); margin-bottom:10px;">Human-readable, persistent Markdown memory preserving multi-season soil health and crop history:</p>
 
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="input-p">Phosphorus (P) Ratio</label>
-                <span class="slider-val" id="val-p">42 kg/ha</span>
-              </div>
-              <input type="range" id="input-p" min="5" max="145" value="42" class="custom-range">
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="input-k">Potassium (K) Ratio</label>
-                <span class="slider-val" id="val-k">43 kg/ha</span>
-              </div>
-              <input type="range" id="input-k" min="5" max="205" value="43" class="custom-range">
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="input-ph">Soil pH Level</label>
-                <span class="slider-val" id="val-ph">6.5</span>
-              </div>
-              <input type="range" id="input-ph" min="3.5" max="9.9" step="0.1" value="6.5" class="custom-range">
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="input-rainfall">Annual Rainfall (mm)</label>
-                <span class="slider-val" id="val-rainfall">180 mm</span>
-              </div>
-              <input type="range" id="input-rainfall" min="20" max="300" value="180" class="custom-range">
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="input-temp">Temperature (°C)</label>
-                <span class="slider-val" id="val-temp">24.5 °C</span>
-              </div>
-              <input type="range" id="input-temp" min="8" max="45" step="0.5" value="24.5" class="custom-range">
-            </div>
-
-            <button type="submit" id="btn-run-crop-ml" class="btn-primary-pill w-full mt-4" style="grid-column: 1 / -1;">
-              <span>🌱 Predict Optimal Crop (Scikit-Learn ML)</span>
-            </button>
-          </form>
-
-          <!-- Dedicated Fertilizer Form (Shown when Fertilizer subtab clicked) -->
-          <form id="fert-ml-form" class="soil-form-grid" style="display: none;">
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="fert-soil-type">Soil Type</label>
-              </div>
-              <select id="fert-soil-type" class="custom-select" style="width: 100%; padding: 8px;">
-                <option value="Black" selected>Black Cotton Soil (Regur)</option>
-                <option value="Clayey">Clayey Alluvium</option>
-                <option value="Red">Red Loamy Soil</option>
-                <option value="Sandy">Sandy Loam</option>
-                <option value="Loamy">Deep Indo-Gangetic Loam</option>
-              </select>
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="fert-crop-type">Crop Variety</label>
-              </div>
-              <select id="fert-crop-type" class="custom-select" style="width: 100%; padding: 8px;">
-                <option value="Cotton" selected>Cotton (Kharif)</option>
-                <option value="Soybean">Soybean (Yellow)</option>
-                <option value="Paddy">Paddy / Rice (Samba/Basmati)</option>
-                <option value="Wheat">Wheat (Lokwan/HD)</option>
-                <option value="Maize">Maize (Hybrid)</option>
-                <option value="Tomato">Tomato (Horticultural)</option>
-                <option value="Sugarcane">Sugarcane (Perennial)</option>
-              </select>
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="fert-moisture">Soil Moisture (%)</label>
-                <span class="slider-val" id="val-fert-moisture">32%</span>
-              </div>
-              <input type="range" id="fert-moisture" min="10" max="75" value="32" class="custom-range">
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="fert-n">Nitrogen Deficit (N)</label>
-                <span class="slider-val" id="val-fert-n">55 kg/ha</span>
-              </div>
-              <input type="range" id="fert-n" min="0" max="140" value="55" class="custom-range">
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="fert-p">Phosphorus Deficit (P)</label>
-                <span class="slider-val" id="val-fert-p">30 kg/ha</span>
-              </div>
-              <input type="range" id="fert-p" min="5" max="120" value="30" class="custom-range">
-            </div>
-
-            <div class="slider-group">
-              <div class="slider-header">
-                <label for="fert-k">Potassium Deficit (K)</label>
-                <span class="slider-val" id="val-fert-k">35 kg/ha</span>
-              </div>
-              <input type="range" id="fert-k" min="5" max="150" value="35" class="custom-range">
-            </div>
-
-            <button type="submit" id="btn-run-fert-ml" class="btn-primary-pill w-full mt-4" style="grid-column: 1 / -1;">
-              <span>🧪 Calculate Stoichiometric Fertilizer Dosage</span>
-            </button>
-          </form>
-
-          <!-- Prediction Results Box -->
-          <div id="soil-ml-output" class="ml-output-container mt-6">
-            <div class="empty-state">
-              <div class="empty-icon">🌱</div>
-              <p>Adjust sliders or click a satellite map hub to generate instant Scikit-Learn crop predictions.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Right: Satellite Earth Observation & Mandi Map -->
-        <section class="glass-card map-card">
-          <div class="card-header">
-            <div class="card-title-group">
-              <span class="icon">🛰️</span>
-              <h2>Earth Observation & APMC Mandi Network</h2>
-            </div>
-            <div class="map-layer-selector" style="display: flex; gap: 6px;">
-              <button type="button" class="layer-btn active" id="layer-btn-sat">🛰️ Satellite</button>
-              <button type="button" class="layer-btn" id="layer-btn-ndvi">🌿 NDVI</button>
-              <button type="button" class="layer-btn" id="layer-btn-ndwi">💧 NDWI</button>
-            </div>
-          </div>
-          <p class="section-desc">Interactive satellite map tracking regional soil zones and live APMC market terminals across India. Click pins to inspect mandi rates and load soil profiles.</p>
-
-          <div id="agri-satellite-map" class="satellite-map-container"></div>
-
-          <div class="map-quick-bar mt-4">
-            <span class="map-bar-title">Click a Hub:</span>
-            <button class="map-chip-btn" data-hub="indore">📍 Indore (Soybean)</button>
-            <button class="map-chip-btn" data-hub="thanjavur">📍 Thanjavur (Cauvery Paddy)</button>
-            <button class="map-chip-btn" data-hub="ludhiana">📍 Ludhiana (Basmati/Wheat)</button>
-            <button class="map-chip-btn" data-hub="nashik">📍 Nashik (Onion/Grapes)</button>
-            <button class="map-chip-btn" data-hub="coimbatore">📍 Coimbatore (Cotton)</button>
-            <button class="map-chip-btn" data-hub="agartala">📍 Agartala (Tomato)</button>
-            <button class="map-chip-btn" data-hub="kolar">📍 Kolar (Tomato/Paddy)</button>
-            <button class="map-chip-btn" data-hub="azadpur">📍 Azadpur (North Hub)</button>
+          <div class="memory-code-box glass-subcard" style="max-height:280px; overflow-y:auto; padding:12px; background:rgba(16,35,34,0.85); border-radius:8px; margin-bottom:16px;">
+            <pre id="memory-md-content" style="margin:0; font-size:11px; color:#a7f3d0; font-family:var(--font-mono); white-space:pre-wrap;"><code>Loading FARM_MEMORY.md...</code></pre>
           </div>
 
-          <!-- Selected Hub Telemetry Card -->
-          <div id="selected-hub-telemetry" class="glass-subcard" style="margin-top: 14px; display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <h4 id="telemetry-hub-name" style="font-size: 14px; font-weight: 700; color: var(--c-almond);">📍 Hub Details</h4>
-              <span id="telemetry-agro-zone" style="font-size: 11px; color: var(--c-emerald-green); font-weight: 700; background: rgba(11,110,79,0.3); padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(80,200,120,0.3);">Zone</span>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; font-size: 12px;">
-              <div style="background: rgba(16,35,34,0.7); padding: 8px; border-radius: 6px; border: 1px solid rgba(214,189,152,0.15);">
-                <span style="color: var(--c-mint-whisper); font-size: 10px; display: block;">Vegetation (NDVI)</span>
-                <strong id="telemetry-ndvi" style="color: var(--c-emerald-green); font-size: 15px;">0.65</strong>
+          <h3 class="panel-subtitle" style="font-size:14px; margin-bottom:8px;">Live Decision Trace (System 1)</h3>
+          <div id="step-trace-log" class="trace-log-list" style="max-height:200px; overflow-y:auto;">
+            <div class="trace-item s1-trace">
+              <div class="trace-dot"></div>
+              <div class="trace-content">
+                <span class="trace-badge">⚡ System 1 Reflex</span>
+                <span class="trace-text">Ready for vernacular farmer query</span>
               </div>
-              <div style="background: rgba(16,35,34,0.7); padding: 8px; border-radius: 6px; border: 1px solid rgba(214,189,152,0.15);">
-                <span style="color: var(--c-mint-whisper); font-size: 10px; display: block;">Canopy Moisture (NDWI)</span>
-                <strong id="telemetry-ndwi" style="color: var(--c-mint-whisper); font-size: 15px;">0.38</strong>
-              </div>
-              <div style="background: rgba(16,35,34,0.7); padding: 8px; border-radius: 6px; border: 1px solid rgba(214,189,152,0.15);">
-                <span style="color: var(--c-mint-whisper); font-size: 10px; display: block;">Sowing Stage</span>
-                <strong id="telemetry-sowing" style="color: var(--c-almond); font-size: 11px;">Active</strong>
-              </div>
-            </div>
-            <div id="telemetry-kvk" style="font-size: 12px; color: var(--c-mint-whisper); background: rgba(11,110,79,0.25); border-left: 3px solid var(--c-emerald-green); padding: 8px 12px; border-radius: 4px; line-height: 1.4;">
             </div>
           </div>
-        </section>
+        </div>
       </div>
+    </section>
 
-      <!-- Empirical Scientific ML Benchmarks & Model Explainability (from l-data-seT---ML) -->
-      <section class="glass-card mt-6" style="margin-top: 24px; padding: 20px;">
-        <div class="card-header" style="padding-left: 0; padding-right: 0;">
-          <div class="card-title-group">
-            <span class="icon">🔬</span>
-            <h2>Scientific ML Explainability & Model Benchmarks (l-data-seT---ML Core)</h2>
-          </div>
-          <span class="status-badge green">99.1% Random Forest Accuracy</span>
-        </div>
-        <p class="section-desc">Empirical evaluations on 2,200+ Indian soil samples across 22 crops and 7 fertilizer classes. Validated against Decision Tree and KNN baselines.</p>
-
-        <div class="charts-gallery-grid">
-          <div class="chart-card glass-subcard">
-            <div class="chart-header">
-              <span class="chart-badge">Feature Importance</span>
-              <h4>RF Crop Feature Weights</h4>
-            </div>
-            <img src="/charts/crop/07_feature_importance.png" alt="Crop Feature Importance Bar Chart" class="chart-img" loading="lazy">
-            <p class="chart-caption">Rainfall, Humidity, and Potassium rank highest in crop discriminant power.</p>
-          </div>
-
-          <div class="chart-card glass-subcard">
-            <div class="chart-header">
-              <span class="chart-badge">Confusion Matrix</span>
-              <h4>Random Forest 22-Crop Matrix</h4>
-            </div>
-            <img src="/charts/crop/05_confusion_matrix_random_forest.png" alt="Random Forest Confusion Matrix" class="chart-img" loading="lazy">
-            <p class="chart-caption">99.1% test set accuracy with minimal misclassifications.</p>
-          </div>
-
-          <div class="chart-card glass-subcard">
-            <div class="chart-header">
-              <span class="chart-badge">Correlation Heatmap</span>
-              <h4>Nutrient Synergy Matrix</h4>
-            </div>
-            <img src="/charts/crop/02_correlation_heatmap.png" alt="Correlation Heatmap" class="chart-img" loading="lazy">
-            <p class="chart-caption">Empirical inter-nutrient correlations across N-P-K, pH, and soil moisture.</p>
-          </div>
-
-          <div class="chart-card glass-subcard">
-            <div class="chart-header">
-              <span class="chart-badge">Fertilizer Schedule</span>
-              <h4>Deficit Prescription Matrix</h4>
-            </div>
-            <img src="/charts/fertilizer/06_confusion_matrix_random_forest.png" alt="Fertilizer Confusion Matrix" class="chart-img" loading="lazy">
-            <p class="chart-caption">Stoichiometric classification of Urea, DAP, 10:26:26, and MOP.</p>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Tab 3: Krishi Panchayat WarRoom -->
-    <div id="tab-panchayat" class="tab-pane">
-      <section class="glass-card panchayat-wrapper">
-        <div class="card-header">
-          <div class="card-title-group">
-            <span class="icon">🏛️</span>
-            <h2>Digital Krishi Panchayat (4-Agent Consensus WarRoom)</h2>
-          </div>
-          <span class="status-badge purple">Adapted from OpenZess WarRoom Core</span>
-        </div>
-        <p class="section-desc">Resolves complex trade-offs between disease treatment costs and APMC mandi market price ROI before spending money on chemicals.</p>
-
-        <div class="panchayat-cards-grid">
-          <!-- Agent 1: Dr Krishi -->
-          <div class="panchayat-agent-card glass-subcard">
-            <div class="agent-avatar">🌿</div>
-            <h3 class="agent-name">Dr. Krishi (डॉ. कृषि)</h3>
-            <span class="agent-role">Plant Pathologist</span>
-            <div class="agent-opinion-body" id="panchayat-op-agri">
-              Identifies pathogen vectors, active chemical ingredients, and pre-harvest intervals (PHI).
-            </div>
-          </div>
-
-          <!-- Agent 2: Mandi Vyapari -->
-          <div class="panchayat-agent-card glass-subcard">
-            <div class="agent-avatar">💰</div>
-            <h3 class="agent-name">Mandi Vyapari (मंडी व्यापारी)</h3>
-            <span class="agent-role">APMC Market Economist</span>
-            <div class="agent-opinion-body" id="panchayat-op-mandi">
-              Cross-references live modal rates to compute treatment ROI vs. early harvesting profits.
-            </div>
-          </div>
-
-          <!-- Agent 3: Mitti Mitra -->
-          <div class="panchayat-agent-card glass-subcard">
-            <div class="agent-avatar">🧪</div>
-            <h3 class="agent-name">Mitti Mitra (मिट्टी मित्र)</h3>
-            <span class="agent-role">Soil & Organic Ecologist</span>
-            <div class="agent-opinion-body" id="panchayat-op-soil">
-              Preserves soil microbiome using yellow sticky traps and cold-pressed neem bio-stimulants.
-            </div>
-          </div>
-        </div>
-
-        <!-- Sarpanch Consensus Box -->
-        <div class="sarpanch-consensus-box glass-subcard mt-6">
-          <div class="sarpanch-header">
-            <div class="sarpanch-avatar">⚖️</div>
-            <div>
-              <h3 class="sarpanch-title">Gram Sarpanch Final Synthesis (ग्राम सरपंच निर्णय)</h3>
-              <p class="sarpanch-sub">Unified vernacular consensus balancing biological health and farm profitability</p>
-            </div>
-          </div>
-          <div class="sarpanch-body" id="panchayat-synthesis">
-            <em>Click "Simulate Panchayat Deliberation" or ask a dilemma query in Krishi Varta to convene the multi-agent council.</em>
-          </div>
-          <div class="mt-4">
-            <button id="btn-simulate-panchayat" class="btn-primary-pill">
-              <span>🏛️ Run Live Panchayat Simulation</span>
-            </button>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Tab 4: Khet-Vault (FARM_MEMORY.md) -->
-    <div id="tab-memory" class="tab-pane">
-      <section class="glass-card memory-wrapper">
-        <div class="card-header">
-          <div class="card-title-group">
-            <span class="icon">📜</span>
-            <h2>Khet-Vault: Auditable FARM_MEMORY.md</h2>
-          </div>
-          <span class="status-badge cyan">Hermes Agent Learning Loop</span>
-        </div>
-        <p class="section-desc">Human-readable, persistent markdown state maintaining zero farmer amnesia across cropping seasons. Fully auditable by agronomists and village sarpanches.</p>
-
-        <div class="memory-code-box glass-subcard">
-          <pre id="memory-md-content"><code>Loading FARM_MEMORY.md...</code></pre>
-        </div>
-      </section>
-    </div>
-  </div>
+      </main> <!-- .app-main-content -->
+    </div> <!-- .dashboard-frame -->
+  </div> <!-- .app-layout -->
 
   <script src="/static/app.js"></script>
 </body>

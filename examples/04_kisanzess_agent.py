@@ -71,6 +71,20 @@ FARMER_QUERIES = [
         "has_image": False,
         "is_dilemma": True,
     },
+    {
+        "id": "KISAN-06",
+        "lang": "Hindi (Live Weather & Soil Moisture Intent)",
+        "query": "अगरतला में आज का मौसम कैसा है? क्या कीटनाशक स्प्रे करना सुरक्षित है और मिट्टी में कितनी नमी है?",
+        "crop_hint": "general",
+        "has_image": False,
+    },
+    {
+        "id": "KISAN-07",
+        "lang": "Hindi (Government Schemes & Subsidy Intent)",
+        "query": "खेत में सोलर पंप लगाने के लिए पीएम-कुसुम (PM-KUSUM) योजना में कितनी सरकारी सब्सिडी मिलती है?",
+        "crop_hint": "general",
+        "has_image": False,
+    },
 ]
 
 # System 1 Laya Typed Question Schema
@@ -78,21 +92,23 @@ AGRICULTURAL_QUESTIONS = {
     "intent": ChoiceQuestion(
         instructions="What is the farmer's primary agricultural requirement?",
         criteria={
-            "mandi_price": "Market rates, price of crops today, MSP status, selling price at mandi",
-            "soil_crop_recommendation": "Soil test, N-P-K values, which crop to plant, crop suitability",
-            "fertilizer_schedule": "Fertilizer dosage, urea, DAP, nutrient deficiency in soil",
-            "crop_disease": "Insects, leaf spots, pest attack, plant disease, yellowing leaves",
-            "panchayat_debate": "Complex trade-off, buy pesticide vs sell early, mandi profit vs treatment cost dilemma",
+            "mandi_price": "Market rates, price of crops today, MSP status, selling price at mandi, मंडी भाव, रेट, बाजार भाव",
+            "soil_crop_recommendation": "Soil test, N-P-K values, which crop to plant, crop suitability, मिट्टी परीक्षण, कौन सी फसल",
+            "fertilizer_schedule": "Fertilizer dosage, urea, DAP, nitrogen, nutrient deficiency in soil, यूरिया, डीएपी, खाद, उर्वरक, कितना डालें",
+            "crop_disease": "Insects, leaf spots, pest attack, plant disease, yellowing leaves, कीड़ा, रोग, झुलसा, फफूंद, काले गोल छल्ले",
+            "panchayat_debate": "Complex trade-off, buy pesticide vs sell early, mandi profit vs treatment cost dilemma, दुविधा, फैसला",
+            "live_weather": "Live weather, rainfall forecast, current temperature, humidity, rootzone soil moisture, spray window, मौसम, बारिश, नमी, तापमान",
+            "gov_schemes": "Government subsidies, PM-KISAN, PM-KUSUM solar pump subsidy, SMAM machinery, PMFBY crop insurance, सरकारी योजना, सब्सिडी, कुसुम, सोलर पंप",
         },
     ),
     "crop": ChoiceQuestion(
         instructions="Which crop is referenced or implied?",
         criteria={
-            "tomato": "Tomato, tamatar",
-            "paddy": "Paddy, rice, dhan, chawal",
-            "onion": "Onion, pyaz",
-            "wheat": "Wheat, gehun",
-            "general": "General farm or unknown crop",
+            "tomato": "Tomato, tamatar, टमाटर",
+            "paddy": "Paddy, rice, dhan, chawal, धान, चावल",
+            "onion": "Onion, pyaz, प्याज",
+            "wheat": "Wheat, gehun, गेहूं",
+            "general": "General farm or unknown crop, सामान्य",
         },
     ),
     "needs_multimodal_vision": NoulQuestion(
@@ -151,7 +167,7 @@ def main():
 
         # Step 1: Laya System 1 Sub-35ms Typed Triage
         reflex_result = router.decide(
-            state={"query": item["query"], "farm_context": farm_context},
+            state={"query": item["query"]},
             questions=AGRICULTURAL_QUESTIONS
         )
         reflex_latency = (time.perf_counter() - t0) * 1000.0
@@ -242,6 +258,27 @@ def main():
             print(f"     ⚖️ Sarpanch Synthesis (Hindi):\n        {consensus.sarpanch_synthesis_hindi.splitlines()[0]}")
             print(f"        Budget: ₹{consensus.total_estimated_budget_inr:.0f} | Economic Viability: {consensus.economic_viability_score * 100:.0f}%")
 
+        elif intent == "live_weather":
+            tool_res = tools.execute_tool("live_weather", location="Agartala")
+            action_ms = (time.perf_counter() - action_t0) * 1000.0
+            data = tool_res.output
+            print(f"  🌦️ Executed Tool: LiveAgroWeatherTool ({action_ms:.1f}ms):")
+            print(f"     ▸ Location:     {data.get('location')}, {data.get('state_or_country')}")
+            print(f"     ▸ Temp / Hum:   {data.get('temperature_celsius')}°C | {data.get('relative_humidity_pct')}%")
+            print(f"     ▸ Soil Moisture:{data.get('rootzone_soil_moisture_m3m3')} m³/m³ ({data.get('soil_moisture_evaluation')})")
+            print(f"     ▸ Spray Window: {'✅ Safe to spray' if data.get('pesticide_spray_window_safe') else '⚠️ Postpone spray (rain/wind risk)'}")
+
+        elif intent == "gov_schemes":
+            tool_res = tools.execute_tool("gov_schemes", query=item["query"])
+            action_ms = (time.perf_counter() - action_t0) * 1000.0
+            data = tool_res.output
+            s_info = data.get("scheme_info", {})
+            print(f"  🏛️ Executed Tool: GovtSchemesTool ({action_ms:.1f}ms):")
+            print(f"     ▸ Scheme:       {s_info.get('official_name')}")
+            print(f"     ▸ Subsidy:      {s_info.get('subsidy_details') or s_info.get('subsidy_percentage')}")
+            print(f"     ▸ Portal:       {s_info.get('portal')}")
+
+
         step_total_ms = reflex_latency + action_ms
         total_latency_ms += step_total_ms
         hypothetical_llm_cost += 0.015
@@ -252,7 +289,7 @@ def main():
     print("📊 KISANZESS BENCHMARK & COST TELEMETRY SUMMARY")
     print("=" * 80)
     avg_latency = total_latency_ms / len(FARMER_QUERIES)
-    print(f"Total Farmer Queries Processed: 5")
+    print(f"Total Farmer Queries Processed: {len(FARMER_QUERIES)}")
     print(f"KisanZess Average Latency:      ⚡ {avg_latency:.1f} ms per query")
     print(f"Traditional Pure-LLM Latency:   🐢 3,250.0 ms per query (50x slower)")
     print(f"Actual Token Cost (KisanZess):  🟢 $0.0008 (System 1 resolved 60% at $0.00)")

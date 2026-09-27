@@ -26,6 +26,7 @@ class ProviderType(str, Enum):
     LAYA = "laya"
     KEV = "kev"
     JEV = "jev"
+    HEURISTIC = "heuristic"
     MOCK = "mock"
 
 

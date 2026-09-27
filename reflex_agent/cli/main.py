@@ -133,7 +133,7 @@ def guard(
 
 @app.command()
 def ui(
-    host: str = typer.Option("127.0.0.1", help="Host interface"),
+    host: str = typer.Option("0.0.0.0", help="Host interface"),
     port: int = typer.Option(8000, help="Port to serve dashboard"),
 ):
     """Launch the Web Dashboard and API server."""

@@ -15,6 +15,8 @@ from reflex_agent.tools.builtin.mandi_tool import MandiPriceTool
 from reflex_agent.tools.builtin.agri_ml import SoilCropRecommendationTool, FertilizerScheduleTool
 from reflex_agent.tools.builtin.panchayat_tool import KrishiPanchayatTool
 from reflex_agent.tools.builtin.geo_intelligence import GeoIntelligenceTool
+from reflex_agent.tools.builtin.live_weather import LiveAgroWeatherTool
+from reflex_agent.tools.builtin.gov_schemes import GovtSchemesTool
 
 
 class ToolRegistry:
@@ -37,6 +39,8 @@ class ToolRegistry:
         self.register(FertilizerScheduleTool())
         self.register(KrishiPanchayatTool())
         self.register(GeoIntelligenceTool())
+        self.register(LiveAgroWeatherTool())
+        self.register(GovtSchemesTool())
 
     def register(self, tool: BaseTool):
         self._tools[tool.name] = tool

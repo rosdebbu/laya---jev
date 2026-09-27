@@ -154,6 +154,61 @@ class ReasoningClient:
                 "acreage": 2.0,
             }
 
+        if tool_name == "live_weather":
+            lower = user_input.lower()
+            loc = "Indore"
+            for candidate in ["agartala", "अगरतला", "indore", "इंदौर", "nashik", "नाशिक", "नासिक", "ludhiana", "लुधियाना", "khanna", "खन्ना", "thanjavur", "तंजावुर", "guntur", "गुंटूर", "rajkot", "राजकोट", "patna", "पटना", "varanasi", "वाराणसी", "jaipur", "जयपुर", "nagpur", "नागपुर"]:
+                if candidate in lower or candidate in user_input:
+                    loc = candidate
+                    break
+            return {"location": loc}
+
+        if tool_name == "gov_schemes":
+            lower = user_input.lower()
+            detected_state = None
+            detected_crop = None
+
+            # Detect Indian States
+            states_map = {
+                "punjab": ["punjab", "पंजाब"],
+                "haryana": ["haryana", "हरियाणा"],
+                "uttar pradesh": ["uttar pradesh", "up", "यूपी", "उत्तर प्रदेश"],
+                "madhya pradesh": ["madhya pradesh", "mp", "एमपी", "मध्य प्रदेश"],
+                "maharashtra": ["maharashtra", "महाराष्ट्र"],
+                "rajasthan": ["rajasthan", "राजस्थान"],
+                "karnataka": ["karnataka", "कर्नाटक"],
+                "tripura": ["tripura", "त्रिपुरा", "अगरतला", "agartala"],
+            }
+            for st, aliases in states_map.items():
+                if any(alias in lower or alias in user_input for alias in aliases):
+                    detected_state = st.title()
+                    break
+
+            # Detect Indian Crops
+            crops_map = {
+                "wheat": ["wheat", "गेहूं", "गेंहू"],
+                "paddy": ["paddy", "धान", "चावल", "rice"],
+                "mustard": ["mustard", "सरसों", "राई"],
+                "cotton": ["cotton", "कपास", "रूई"],
+                "soybean": ["soybean", "सोयाबीन"],
+                "sugarcane": ["sugarcane", "गन्ना"],
+                "maize": ["maize", "मक्का"],
+                "tomato": ["tomato", "टमाटर"],
+                "onion": ["onion", "प्याज"],
+                "potato": ["potato", "आलू"],
+            }
+            for cr, aliases in crops_map.items():
+                if any(alias in lower or alias in user_input for alias in aliases):
+                    detected_crop = cr.title()
+                    break
+
+            return {
+                "query": user_input,
+                "state": detected_state,
+                "crop": detected_crop
+            }
+
+
         # If LLM is available, use litellm
         if self.has_api_key:
             try:
@@ -291,6 +346,80 @@ class ReasoningClient:
                 f"📈 **आर्थिक व्यवहार्यता स्कोर:** {viability*100:.0f}%\n\n"
                 f"*(4-एजेंट पंचायत: डॉ. कृषि + मंडी व्यापारी + मिट्टी मित्र + ग्राम सरपंच)*"
             )
+
+        if tool_name == "live_weather":
+            data = output if isinstance(output, dict) else {}
+            loc = data.get("location", "क्षेत्र")
+            st = data.get("state_or_country", "India")
+            temp = data.get("temperature_celsius", 26.0)
+            hum = data.get("relative_humidity_pct", 65.0)
+            rain = data.get("current_rain_mm", 0.0)
+            wind = data.get("wind_speed_kmh", 10.0)
+            soil_t = data.get("soil_surface_temp_c", 25.0)
+            soil_m = data.get("rootzone_soil_moisture_m3m3", 0.28)
+            m_eval = data.get("soil_moisture_evaluation", "सामान्य")
+            spray_safe = "✅ सुरक्षित (दवा छिड़क सकते हैं)" if data.get("pesticide_spray_window_safe") else "⚠️ असुरक्षित (बारिश/तेज हवा का जोखिम)"
+            rec = data.get("agri_recommendation", "खेत में सामान्य कार्य जारी रखें।")
+            forecast = data.get("3_day_precipitation_forecast_mm", [0, 0, 0])
+
+            return (
+                f"🌦️ **लाइव कृषि मौसम एवं मिट्टी नमी बुलेटिन ({loc}, {st})**\n\n"
+                f"• **तापमान:** **{temp}°C** | **हवा में नमी (आर्द्रता):** **{hum}%**\n"
+                f"• **वर्तमान वर्षा:** {rain} mm | **हवा की गति:** {wind} km/h\n"
+                f"• **3-दिवसीय वर्षा पूर्वानुमान:** {forecast} mm\n"
+                f"• **मिट्टी की नमी (Rootzone Moisture):** **{soil_m} m³/m³** ({m_eval})\n"
+                f"• **मिट्टी सतह तापमान:** {soil_t}°C\n"
+                f"• **कीटनाशक छिड़काव खिड़की:** {spray_safe}\n\n"
+                f"💡 **कृषि मौसम विशेषज्ञ सलाह:** {rec}\n\n"
+                f"*(Open-Meteo लाइव हाई-रिज़ॉल्यूशन ग्लोबल ECMWF/IFS वेदर मॉडल: sub-100ms)*"
+            )
+
+        if tool_name == "gov_schemes":
+            data = output if isinstance(output, dict) else {}
+            schemes_list = data.get("schemes", [])
+
+            if schemes_list:
+                s_first = schemes_list[0]
+                state_str = ", ".join(s_first.get("states", ["All India"]))
+                crop_str = ", ".join(s_first.get("crops", ["All Crops"]))
+                
+                details_text = ""
+                for idx, s in enumerate(schemes_list[:3]):
+                    details_text += (
+                        f"### {idx+1}. {s.get('name')}\n"
+                        f"• 💰 **सब्सिडी / वित्तीय लाभ:** **{s.get('subsidy_amount')}**\n"
+                        f"• 🎯 **उद्देश्य:** {s.get('objective')}\n"
+                        f"• 👨‍🌾 **पात्रता:** {s.get('eligibility')}\n"
+                        f"• 🌐 **आवेदन पोर्टल:** [{s.get('portal')}]({s.get('portal')})\n\n"
+                    )
+
+                other_count = len(schemes_list) - 3
+                other_note = f"*(और {other_count} अन्य योजनाएं उपलब्ध हैं। पूरा विवरण पोर्टल टैब में देखें।)*\n\n" if other_count > 0 else ""
+
+                return (
+                    f"🏛️ **सरकारी कृषि योजना एवं सब्सिडी बुलेटिन (राज्य: {state_str} | फसल: {crop_str})**\n\n"
+                    f"{details_text}"
+                    f"{other_note}"
+                    f"*(कृषि एवं किसान कल्याण मंत्रालय तथा राज्य कृषि विभाग प्रमाणित डेटा | 0 LLM टोकन खर्च)*"
+                )
+
+            s_info = data.get("scheme_info", {})
+            name = s_info.get("official_name") or s_info.get("name", "सरकारी कृषि योजना")
+            obj = s_info.get("objective", "")
+            subsidy = s_info.get("subsidy_amount") or s_info.get("subsidy_details") or "विवरण पोर्टल पर देखें"
+            elig = s_info.get("eligibility", "सभी पात्र किसान")
+            portal = s_info.get("portal", "https://myscheme.gov.in")
+
+            return (
+                f"🏛️ **सरकारी कृषि योजना एवं वित्तीय सहायता विवरण**\n\n"
+                f"📋 **योजना का नाम:** **{name}**\n\n"
+                f"🎯 **मुख्य उद्देश्य:** {obj}\n\n"
+                f"💰 **सब्सिडी एवं वित्तीय लाभ:** **{subsidy}**\n\n"
+                f"👨‍🌾 **पात्रता एवं शर्तें:** {elig}\n\n"
+                f"🌐 **आधिकारिक आवेदन पोर्टल:** [{portal}]({portal})\n\n"
+                f"*(कृषि एवं किसान कल्याण मंत्रालय, भारत सरकार प्रमाणित डेटा)*"
+            )
+
 
         if tool_name == "calculator":
             return f"Result: **{output}**"

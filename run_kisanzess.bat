@@ -8,11 +8,11 @@ echo   🌾 KISANZESS: DUAL-BRAIN VERNACULAR AGRICULTURAL CO-PILOT
 echo   Google Cloud | Code for Communities 2.0 (Track 4: Agriculture)
 echo ===============================================================================
 echo.
-echo   [1] Run 5-Query Dual-Brain Pipeline Demo (Terminal)
+echo   [1] Run 7-Query Dual-Brain Pipeline Demo (Terminal)
 echo   [2] Launch KisanZess Web Command Matrix Dashboard
 echo   [3] Train Crop & Fertilizer Scikit-Learn ML Models
 echo   [4] Open Hackathon Presentation Pitch Deck (.pptx)
-echo   [5] Run Full Automated Test Suite (15 Tests)
+echo   [5] Run Full Automated Test Suite (17 Tests)
 echo   [6] Exit
 echo.
 set /p choice="Select an option [1-6]: "

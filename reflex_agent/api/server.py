@@ -214,6 +214,90 @@ async def geo_profile_detail_endpoint(region: str):
     return res.output
 
 
+@app.get("/api/weather/live")
+async def live_weather_endpoint(location: str = "Indore"):
+    res = agent.tools.execute_tool("live_weather", location=location)
+    return res.output
+
+
+@app.get("/api/schemes")
+async def gov_schemes_endpoint(query: str = "pm_kisan"):
+    res = agent.tools.execute_tool("gov_schemes", query=query)
+    return res.output
+
+
+@app.get("/api/schemes/filter")
+async def gov_schemes_filter_endpoint(
+    state: Optional[str] = None,
+    crop: Optional[str] = None,
+    category: Optional[str] = None,
+    search: Optional[str] = None
+):
+    from reflex_agent.tools.builtin.gov_schemes import GovtSchemesTool
+    tool = GovtSchemesTool()
+    res = tool.execute(query=search or "all", state=state, crop=crop, category=category)
+    return res.output
+
+
+@app.get("/api/schemes/states")
+async def gov_schemes_states_endpoint():
+    from reflex_agent.tools.builtin.gov_schemes import GovtSchemesTool
+    return {"states": GovtSchemesTool.get_available_states()}
+
+
+@app.get("/api/schemes/crops")
+async def gov_schemes_crops_endpoint():
+    from reflex_agent.tools.builtin.gov_schemes import GovtSchemesTool
+    return {"crops": GovtSchemesTool.get_available_crops()}
+
+
+# --- Sarvam AI Indic Speech & Language Intelligence ---
+class SarvamTTSRequest(BaseModel):
+    text: str
+    language_code: str = "hi-IN"
+    speaker: Optional[str] = None
+    pace: float = 1.0
+
+
+class SarvamTranslateRequest(BaseModel):
+    text: str
+    source_language_code: str = "en-IN"
+    target_language_code: str = "hi-IN"
+
+
+@app.get("/api/speech/languages")
+async def speech_languages_endpoint():
+    from reflex_agent.reasoning.sarvam_speech import SUPPORTED_INDIC_LANGUAGES
+    return SUPPORTED_INDIC_LANGUAGES
+
+
+@app.post("/api/speech/tts")
+async def sarvam_tts_endpoint(req: SarvamTTSRequest):
+    from reflex_agent.reasoning.sarvam_speech import SarvamSpeechEngine
+    engine = SarvamSpeechEngine()
+    result = engine.text_to_speech(
+        text=req.text,
+        language_code=req.language_code,
+        speaker=req.speaker,
+        pace=req.pace,
+    )
+    return result
+
+
+@app.post("/api/speech/translate")
+async def sarvam_translate_endpoint(req: SarvamTranslateRequest):
+    from reflex_agent.reasoning.sarvam_speech import SarvamSpeechEngine
+    engine = SarvamSpeechEngine()
+    result = engine.translate(
+        text=req.text,
+        source_language_code=req.source_language_code,
+        target_language_code=req.target_language_code,
+    )
+    return result
+
+
+
+
 
 @app.websocket("/ws/chat")
 async def websocket_chat(websocket: WebSocket):
@@ -240,7 +324,7 @@ async def websocket_chat(websocket: WebSocket):
         logger.error(f"WebSocket error: {e}")
         try:
             await websocket.send_json({"event_type": "error", "message": str(e)})
-        except:
+        except Exception:
             pass
 
 

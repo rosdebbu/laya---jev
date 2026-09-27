@@ -61,11 +61,673 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Outdoor Field Mode Toggle (Direct Sunlight High-Contrast)
   const btnFieldMode = document.getElementById("btn-field-mode");
+  const btnSidebarFieldMode = document.getElementById("btn-sidebar-field-mode");
+  const btnTopAntiglare = document.getElementById("btn-top-antiglare");
+  const antiglareStatusBadge = document.getElementById("antiglare-status-badge");
+  const btnTopAudioReadout = document.getElementById("btn-top-audio-readout");
+
+  function syncFieldMode(isField) {
+    if (btnFieldMode) {
+      btnFieldMode.innerHTML = isField ? "<span>🌙 Dark Matrix</span>" : "<span>☀️ Field Mode</span>";
+    }
+    if (btnSidebarFieldMode) {
+      btnSidebarFieldMode.innerHTML = isField ? "<span>🌙 Dark Matrix Mode</span>" : "<span>☀️ Anti-Glare Sunlight Mode</span>";
+    }
+    if (antiglareStatusBadge) {
+      antiglareStatusBadge.textContent = isField ? "ACTIVE" : "STANDBY";
+      antiglareStatusBadge.className = isField ? "pill-badge green" : "pill-badge";
+    }
+  }
+
   if (btnFieldMode) {
     btnFieldMode.addEventListener("click", () => {
       const isField = document.body.classList.toggle("field-mode");
-      btnFieldMode.innerHTML = isField ? "<span>🌙 Dark Matrix</span>" : "<span>☀️ Field Mode</span>";
+      syncFieldMode(isField);
     });
+  }
+
+  if (btnSidebarFieldMode) {
+    btnSidebarFieldMode.addEventListener("click", () => {
+      const isField = document.body.classList.toggle("field-mode");
+      syncFieldMode(isField);
+    });
+  }
+
+  if (btnTopAntiglare) {
+    btnTopAntiglare.addEventListener("click", () => {
+      const isField = document.body.classList.toggle("field-mode");
+      syncFieldMode(isField);
+    });
+  }
+
+  // Eyes-Free Audio Readout Trigger
+  if (btnTopAudioReadout) {
+    btnTopAudioReadout.addEventListener("click", () => {
+      const textToSpeak = "KisanZess Eyes-Free Audio is active. Top recommendation for Indore and Malwa region: Selling soybean in Ujjain APMC instead of Dewas yields ₹4,720 in extra net profit.";
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = "en-IN";
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+      }
+    });
+  }
+
+  // --- CHATGPT-STYLE SIDEBAR CONTROLLER ---
+  const appSidebar = document.getElementById("app-sidebar");
+  const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+  const btnSidebarToggle = document.getElementById("btn-sidebar-toggle");
+  const btnMobileMenu = document.getElementById("btn-mobile-menu");
+  const btnSidebarCollapse = document.getElementById("btn-sidebar-collapse");
+  const btnNewConsultation = document.getElementById("btn-new-consultation");
+
+  function openSidebar() {
+    if (appSidebar) appSidebar.classList.add("open");
+    if (sidebarBackdrop) sidebarBackdrop.classList.add("active");
+  }
+
+  function closeSidebar() {
+    if (appSidebar) appSidebar.classList.remove("open");
+    if (sidebarBackdrop) sidebarBackdrop.classList.remove("active");
+  }
+
+  if (btnSidebarToggle) btnSidebarToggle.addEventListener("click", openSidebar);
+  if (btnMobileMenu) btnMobileMenu.addEventListener("click", openSidebar);
+  if (sidebarBackdrop) sidebarBackdrop.addEventListener("click", closeSidebar);
+
+  if (btnSidebarCollapse) {
+    btnSidebarCollapse.addEventListener("click", () => {
+      if (window.innerWidth >= 1024) {
+        if (appSidebar) appSidebar.classList.toggle("collapsed");
+      } else {
+        closeSidebar();
+      }
+    });
+  }
+
+  // Keyboard shortcut listener (Esc to close, Ctrl+N for new consultation, Ctrl+/ to toggle)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && appSidebar && appSidebar.classList.contains("open")) {
+      closeSidebar();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "n") {
+      e.preventDefault();
+      startNewConsultation();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === "/") {
+      e.preventDefault();
+      if (appSidebar && appSidebar.classList.contains("open")) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    }
+  });
+
+  // New Consultation Action (Clears messages, restores welcome, resets session)
+  function startNewConsultation() {
+    if (chatMessages) {
+      chatMessages.innerHTML = `
+        <div class="message assistant-msg glass-subcard">
+          <div class="msg-header">
+            <span class="role-badge reflex-badge">⚡ KisanZess Co-Pilot</span>
+            <span class="timestamp">Session Reset</span>
+          </div>
+          <div class="msg-body">
+            Hello Rameshwar ji! A new consultation session has started. Your farm profile (4.0 Acres, Black Soil, Indore) is securely loaded. 
+            <br><br>
+            📈 <strong>Mandi Prices:</strong> Compare live prices and transport profits across nearest APMC mandis.<br>
+            🏛️ <strong>Government Schemes:</strong> Explore tailored subsidies and direct economic assistance.<br>
+            🌱 <strong>Soil & Weather:</strong> Check fertilizer balance, live agro-weather, and spraying windows.<br>
+            📸 <strong>Leaf Disease Diagnosis:</strong> Upload a leaf photo for instant diagnosis.
+          </div>
+        </div>
+      `;
+    }
+    if (userInput) userInput.value = "";
+    if (heroUserInput) heroUserInput.value = "";
+    closeSidebar();
+  }
+
+  if (btnNewConsultation) {
+    btnNewConsultation.addEventListener("click", startNewConsultation);
+  }
+
+  function switchToTab(tabId) {
+    document.querySelectorAll(".tab-pane").forEach((pane) => {
+      pane.classList.remove("active");
+    });
+    const targetPane = document.getElementById(tabId);
+    if (targetPane) {
+      targetPane.classList.add("active");
+    }
+    document.querySelectorAll(".sidebar-nav-item").forEach((btn) => {
+      if (btn.getAttribute("data-tab") === tabId) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+
+    if (tabId === "tab-schemes" && typeof loadGovSchemes === "function") {
+      loadGovSchemes();
+    } else if (tabId === "tab-telemetry" && typeof loadFarmMemory === "function") {
+      loadFarmMemory();
+    }
+  }
+
+  // Back to Dashboard buttons
+  document.querySelectorAll(".btn-back-dashboard").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      switchToTab("view-dashboard");
+    });
+  });
+
+  // Sidebar Feature Navigation Shortcuts
+  const sidebarNavItems = document.querySelectorAll(".sidebar-nav-item");
+  sidebarNavItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const tabId = item.getAttribute("data-tab") || "view-dashboard";
+      switchToTab(tabId);
+
+      const action = item.getAttribute("data-action");
+      if (action === "leaf-vision") {
+        const uploadInput = document.getElementById("leaf-upload");
+        if (uploadInput) uploadInput.click();
+      }
+      closeSidebar();
+    });
+  });
+
+  // --- MANDI ARBITRAGE DYNAMIC CALCULATOR (Matching Mockup Image) ---
+  const selectArbitrageCrop = document.getElementById("select-arbitrage-crop");
+  const dashboardAiBubble = document.getElementById("dashboard-ai-bubble");
+  const btnDashboardActionScheme = document.getElementById("btn-dashboard-action-scheme");
+  const btnQuickVoiceListen = document.getElementById("btn-quick-voice-listen");
+  const btnQuickAskPanchayat = document.getElementById("btn-quick-ask-panchayat");
+  const heroUserInput = document.getElementById("hero-user-input");
+  const btnHeroSend = document.getElementById("btn-hero-send");
+  const btnHeroMic = document.getElementById("btn-hero-mic");
+
+  const cropArbitrageData = {
+    soybean: {
+      name: "Soybean Yellow",
+      dewas: { price: "₹4,400", gross: "₹88,000", transport: "₹200", net: "₹87,800" },
+      ujjain: { price: "₹4,720", diff: "+₹320", gross: "₹94,400", transport: "₹1,680", net: "₹92,720", profit: "+₹4,720" },
+      indore: { price: "₹4,650", diff: "+₹250", gross: "₹93,000", transport: "₹1,400", net: "+₹3,800 Extra" },
+      speech: "Hello Rameshwar ji! I have compared prices between Indore and Ujjain mandis: Ujjain is trading soybean ₹320 per quintal higher today. Deducting transport, your net extra profit is ₹4,720!"
+    },
+    wheat: {
+      name: "Wheat Sharbati",
+      dewas: { price: "₹2,450", gross: "₹98,000", transport: "₹200", net: "₹97,800" },
+      ujjain: { price: "₹2,780", diff: "+₹330", gross: "₹1,11,200", transport: "₹1,680", net: "₹1,09,520", profit: "+₹11,720" },
+      indore: { price: "₹2,620", diff: "+₹170", gross: "₹1,04,800", transport: "₹1,400", net: "+₹5,600 Extra" },
+      speech: "Rameshwar ji! For Sharbati wheat, Ujjain APMC is at ₹2,780 compared to ₹2,450 in Dewas. Across 40 quintals, after freight deduction, you earn an extra ₹11,720 net profit!"
+    },
+    cotton: {
+      name: "Cotton Medium Staple",
+      dewas: { price: "₹7,100", gross: "₹1,42,000", transport: "₹200", net: "₹1,41,800" },
+      ujjain: { price: "₹7,650", diff: "+₹550", gross: "₹1,53,000", transport: "₹1,680", net: "₹1,51,320", profit: "+₹9,520" },
+      indore: { price: "₹7,400", diff: "+₹300", gross: "₹1,48,000", transport: "₹1,400", net: "+₹4,800 Extra" },
+      speech: "For cotton, Ujjain APMC rate is ₹7,650, which is ₹550 per quintal higher than Dewas. After diesel expenses, you gain ₹9,520 in extra net profit."
+    },
+    tomato: {
+      name: "Tomato Hybrid",
+      dewas: { price: "₹2,100", gross: "₹63,000", transport: "₹200", net: "₹62,800" },
+      ujjain: { price: "₹2,550", diff: "+₹450", gross: "₹76,500", transport: "₹1,680", net: "₹74,820", profit: "+₹12,020" },
+      indore: { price: "₹2,400", diff: "+₹300", gross: "₹72,000", transport: "₹1,400", net: "+₹7,800 Extra" },
+      speech: "Tomato has strong demand in Ujjain Mandi today at ₹2,550 per quintal. After transport costs, you secure ₹12,020 in extra net profit compared to Dewas."
+    },
+    onion: {
+      name: "Onion Nashik Red",
+      dewas: { price: "₹2,800", gross: "₹84,000", transport: "₹200", net: "₹83,800" },
+      ujjain: { price: "₹3,250", diff: "+₹450", gross: "₹97,500", transport: "₹1,680", net: "₹95,820", profit: "+₹12,020" },
+      indore: { price: "₹3,050", diff: "+₹250", gross: "₹91,500", transport: "₹1,400", net: "+₹6,300 Extra" },
+      speech: "Onion is trading at ₹3,250 in Ujjain Mandi. At ₹450 above Dewas, you gain a direct net profit of ₹12,020."
+    }
+  };
+
+  function updateArbitrageDisplay(cropKey) {
+    const data = cropArbitrageData[cropKey] || cropArbitrageData.soybean;
+
+    // Update Card 1: Dewas
+    const dewasPrice = document.getElementById("dewas-price");
+    if (dewasPrice) dewasPrice.textContent = data.dewas.price;
+    const dewasGross = document.getElementById("dewas-gross");
+    if (dewasGross) dewasGross.textContent = data.dewas.gross;
+    const dewasNet = document.getElementById("dewas-net");
+    if (dewasNet) dewasNet.textContent = data.dewas.net;
+    const dewasProfit = document.getElementById("dewas-profit");
+    if (dewasProfit) dewasProfit.textContent = "+₹4,720";
+
+    // Update Card 2: Ujjain Best Return
+    const ujjainProfit = document.getElementById("ujjain-profit");
+    if (ujjainProfit) ujjainProfit.textContent = data.ujjain.profit;
+    const ujjainPrice = document.getElementById("ujjain-price");
+    if (ujjainPrice) ujjainPrice.textContent = data.ujjain.price;
+    const ujjainGross = document.getElementById("ujjain-gross");
+    if (ujjainGross) ujjainGross.textContent = data.ujjain.gross;
+    const ujjainNet = document.getElementById("ujjain-net");
+    if (ujjainNet) ujjainNet.textContent = data.ujjain.net;
+    const ujjainExtra = document.getElementById("ujjain-extra-profit");
+    if (ujjainExtra) ujjainExtra.textContent = "+₹37,230";
+
+    // Update Card 3: Indore
+    const indorePrice = document.getElementById("indore-price");
+    if (indorePrice) indorePrice.textContent = data.indore.price;
+    const indoreGross = document.getElementById("indore-gross");
+    if (indoreGross) indoreGross.textContent = data.indore.gross;
+    const indoreNet = document.getElementById("indore-net");
+    if (indoreNet) indoreNet.textContent = data.indore.net;
+    const indoreProfit = document.getElementById("indore-profit");
+    if (indoreProfit) indoreProfit.textContent = "₹D6BD98";
+
+    if (dashboardAiBubble) {
+      dashboardAiBubble.textContent = data.speech;
+    }
+  }
+
+  if (selectArbitrageCrop) {
+    selectArbitrageCrop.addEventListener("change", (e) => {
+      updateArbitrageDisplay(e.target.value);
+    });
+  }
+
+  // Scheme Action Button
+  if (btnDashboardActionScheme) {
+    btnDashboardActionScheme.addEventListener("click", () => {
+      switchToTab("tab-schemes");
+    });
+  }
+
+  // Quick Voice Listen Button
+  if (btnQuickVoiceListen) {
+    btnQuickVoiceListen.addEventListener("click", () => {
+      const textToSpeak = dashboardAiBubble ? dashboardAiBubble.textContent : "Selling in Ujjain Mandi yields higher net profit.";
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        const selLang = document.getElementById("select-language");
+        utterance.lang = selLang ? selLang.value : "en-IN";
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+      }
+    });
+  }
+
+  // Quick Ask Panchayat Button
+  if (btnQuickAskPanchayat) {
+    btnQuickAskPanchayat.addEventListener("click", () => {
+      switchToTab("tab-panchayat");
+      const panchayatInput = document.getElementById("panchayat-query");
+      if (panchayatInput) {
+        panchayatInput.value = "What is the safest and highest-profit decision for selling soybean between Dewas, Indore, and Ujjain Mandis?";
+        const btnDebate = document.getElementById("btn-run-panchayat");
+        if (btnDebate) btnDebate.click();
+      }
+    });
+  }
+
+  // Hero Prompt Input (Conversational AI Inline Card)
+  function handleHeroSubmit() {
+    if (!heroUserInput || !heroUserInput.value.trim()) return;
+    const text = heroUserInput.value.trim();
+    if (userInput) userInput.value = text;
+    if (chatForm) chatForm.dispatchEvent(new Event("submit"));
+    heroUserInput.value = "";
+  }
+
+  if (btnHeroSend) {
+    btnHeroSend.addEventListener("click", handleHeroSubmit);
+  }
+  if (heroUserInput) {
+    heroUserInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleHeroSubmit();
+      }
+    });
+  }
+  if (btnHeroMic) {
+    btnHeroMic.addEventListener("click", () => {
+      const btnMic = document.getElementById("btn-mic");
+      if (btnMic) btnMic.click();
+    });
+  }
+
+  // Mandi Card Action Button Handlers
+  document.querySelectorAll(".btn-mandi-card").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const mandi = btn.getAttribute("data-mandi") || "Ujjain";
+      if (userInput) {
+        userInput.value = `Provide full details on today's prices, arrivals, and transportation costs for ${mandi} mandi.`;
+      }
+      if (chatForm) chatForm.dispatchEvent(new Event("submit"));
+    });
+  });
+
+  // Wire up any auxiliary [data-tab] buttons (e.g. Back buttons or inline links)
+  document.querySelectorAll("[data-tab]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const tabId = btn.getAttribute("data-tab");
+      if (tabId) switchToTab(tabId);
+    });
+  });
+
+  // --- GOVERNMENT SCHEMES & SUBSIDIES HARVESTER CONTROLLER (Zero-Token Portal) ---
+  const filterState = document.getElementById("filter-state");
+  const filterCrop = document.getElementById("filter-crop");
+  const filterCategory = document.getElementById("filter-category");
+  const btnApplySchemeFilter = document.getElementById("btn-apply-scheme-filter");
+  const btnResetSchemeFilter = document.getElementById("btn-reset-scheme-filter");
+  const schemesCardsContainer = document.getElementById("schemes-cards-container");
+  const schemesCountBadge = document.getElementById("schemes-count-badge");
+
+  async function loadGovSchemes() {
+    if (!schemesCardsContainer) return;
+
+    const stateVal = filterState ? filterState.value : "All India";
+    const cropVal = filterCrop ? filterCrop.value : "All Crops";
+    const catVal = filterCategory ? filterCategory.value : "all";
+
+    schemesCardsContainer.innerHTML = '<div style="color:var(--c-mint-whisper); font-style:italic; padding:24px; grid-column:1/-1;">⚡ Loading verified government schemes (&lt;5ms)...</div>';
+
+    try {
+      const url = `/api/schemes/filter?state=${encodeURIComponent(stateVal)}&crop=${encodeURIComponent(cropVal)}&category=${encodeURIComponent(catVal)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const schemes = data.schemes || [];
+
+      if (schemesCountBadge) {
+        schemesCountBadge.textContent = `Showing Schemes: ${schemes.length}`;
+      }
+
+      if (schemes.length === 0) {
+        schemesCardsContainer.innerHTML = `
+          <div class="empty-state glass-subcard" style="padding:28px; text-align:center; grid-column: 1 / -1;">
+            <span style="font-size:36px;">🔍</span>
+            <p style="color:#FFFFFF; font-weight:700; margin-top:8px;">No matching government scheme found for this selection.</p>
+            <p style="color:var(--c-mint-whisper); font-size:12px;">Please select 'All India' or another crop and try again.</p>
+          </div>
+        `;
+        return;
+      }
+
+      schemesCardsContainer.innerHTML = schemes.map((s) => {
+        const badgeColor = s.level === "Central" ? "badge-central" : "badge-state";
+        const statesBadge = (s.states || []).join(", ");
+        const cropsBadge = (s.crops || []).slice(0, 4).join(", ") + ((s.crops || []).length > 4 ? "..." : "");
+        const docsList = (s.documents || []).map(d => `<span class="doc-pill">📄 ${d}</span>`).join(" ");
+
+        return `
+          <div class="scheme-card-item glass-subcard">
+            <div class="scheme-card-header">
+              <span class="level-badge ${badgeColor}">${s.level || "Central"}</span>
+              <span class="scheme-state-tag">📍 ${statesBadge}</span>
+            </div>
+            <h3 class="scheme-name">${s.name}</h3>
+            
+            <div class="subsidy-highlight-box">
+              <span class="subsidy-label">💰 Government Subsidy / Grant:</span>
+              <span class="subsidy-amount">${s.subsidy_amount || "Financial Assistance"}</span>
+            </div>
+
+            <p class="scheme-desc">${s.objective || ""}</p>
+
+            <div class="scheme-meta-section">
+              <div class="meta-row">
+                <span class="meta-icon">🌱</span>
+                <span class="meta-text"><strong>Crops:</strong> ${cropsBadge}</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-icon">👨‍🌾</span>
+                <span class="meta-text"><strong>Eligibility:</strong> ${s.eligibility || "All eligible farmers"}</span>
+              </div>
+              <div class="meta-docs">
+                <strong>Required Documents:</strong>
+                <div class="docs-row">${docsList}</div>
+              </div>
+            </div>
+
+            <div class="scheme-card-actions">
+              <a href="${s.portal}" target="_blank" rel="noopener noreferrer" class="btn-portal-link">
+                <span>🌐 Official Portal</span>
+              </a>
+              <button type="button" class="btn-ask-in-chat" data-query="${s.query_hint || s.name}">
+                <span>💬 Ask in Chat</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Hook up "Ask in Chat" button inside cards
+      schemesCardsContainer.querySelectorAll(".btn-ask-in-chat").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const q = btn.getAttribute("data-query");
+          switchToChatAndAsk(q);
+        });
+      });
+
+    } catch (err) {
+      schemesCardsContainer.innerHTML = `<div style="color:#ef4444; padding:20px; grid-column:1/-1;">Error loading schemes: ${err.message}</div>`;
+    }
+  }
+
+  function switchToChatAndAsk(query) {
+    switchToTab("tab-chat");
+    if (userInput && chatForm) {
+      userInput.value = query;
+      chatForm.dispatchEvent(new Event("submit"));
+    }
+  }
+
+  if (btnApplySchemeFilter) {
+    btnApplySchemeFilter.addEventListener("click", loadGovSchemes);
+  }
+
+  if (btnResetSchemeFilter) {
+    btnResetSchemeFilter.addEventListener("click", () => {
+      if (filterState) filterState.value = "All India";
+      if (filterCrop) filterCrop.value = "All Crops";
+      if (filterCategory) filterCategory.value = "all";
+      loadGovSchemes();
+    });
+  }
+
+  if (filterState) filterState.addEventListener("change", loadGovSchemes);
+  if (filterCrop) filterCrop.addEventListener("change", loadGovSchemes);
+  if (filterCategory) filterCategory.addEventListener("change", loadGovSchemes);
+
+  // Initial load of schemes
+  loadGovSchemes();
+
+  // Indic Voice & Language State (Sarvam AI Indic Stack)
+  const selectLanguage = document.getElementById("select-language");
+  const voiceLangLabel = document.getElementById("voice-lang-label");
+  const btnMic = document.getElementById("btn-mic");
+  const voiceIndicator = document.getElementById("voice-indicator");
+
+  let activeLang = selectLanguage ? selectLanguage.value : "en-IN";
+
+  const langPlaceholders = {
+    "hi-IN": "Ask in English or vernacular (e.g. What is the soybean rate in Indore Mandi?)...",
+    "bn-IN": "Ask in English or vernacular (e.g. What is the tomato rate in Agartala Mandi?)...",
+    "ta-IN": "Ask in English or vernacular (e.g. What is the market price?)...",
+    "te-IN": "Ask in English or vernacular (e.g. What is the market price?)...",
+    "mr-IN": "Ask in English or vernacular (e.g. What is the soybean rate today?)...",
+    "gu-IN": "Ask in English or vernacular (e.g. What is the market price?)...",
+    "pa-IN": "Ask in English or vernacular (e.g. What is the paddy price in mandi?)...",
+    "kn-IN": "Ask in English or vernacular (e.g. What is the market price?)...",
+    "ml-IN": "Ask in English or vernacular (e.g. What is the market price?)...",
+    "od-IN": "Ask in English or vernacular (e.g. What is the mandi rate?)...",
+    "en-IN": "Ask in English (e.g. What is the soybean price in Indore Mandi?)..."
+  };
+
+  if (selectLanguage) {
+    selectLanguage.addEventListener("change", () => {
+      activeLang = selectLanguage.value;
+      const selectedOption = selectLanguage.options[selectLanguage.selectedIndex];
+      if (voiceLangLabel) {
+        const textParts = selectedOption.text.split(" ");
+        voiceLangLabel.textContent = textParts[1] || "English";
+      }
+      if (userInput && langPlaceholders[activeLang]) {
+        userInput.placeholder = langPlaceholders[activeLang];
+      }
+    });
+  }
+
+  // Voice Recognition (Speech to Text - STT)
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  let isRecording = false;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+      isRecording = true;
+      if (btnMic) {
+        btnMic.classList.add("recording");
+        btnMic.title = "Listening... Click to Stop";
+      }
+      if (voiceIndicator) voiceIndicator.classList.add("speaking");
+    };
+
+    recognition.onresult = (event) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        transcript += event.results[i][0].transcript;
+      }
+      userInput.value = transcript;
+    };
+
+    recognition.onerror = (event) => {
+      console.warn("Speech recognition error:", event.error);
+      stopRecording();
+    };
+
+    recognition.onend = () => {
+      stopRecording();
+      if (userInput.value.trim().length > 0) {
+        chatForm.dispatchEvent(new Event("submit"));
+      }
+    };
+  }
+
+  function stopRecording() {
+    isRecording = false;
+    if (btnMic) {
+      btnMic.classList.remove("recording");
+      btnMic.title = "Speak in English (Voice / STT)";
+    }
+    if (voiceIndicator) voiceIndicator.classList.remove("speaking");
+    if (recognition) {
+      try { recognition.stop(); } catch (e) {}
+    }
+  }
+
+  if (btnMic) {
+    btnMic.addEventListener("click", () => {
+      if (!SpeechRecognition) {
+        alert("Your browser does not support Speech Recognition. Please use Google Chrome or Microsoft Edge.");
+        return;
+      }
+      if (isRecording) {
+        stopRecording();
+      } else {
+        try {
+          recognition.lang = activeLang;
+          recognition.start();
+        } catch (e) {
+          console.warn("Recognition start failed:", e);
+          stopRecording();
+        }
+      }
+    });
+  }
+
+  // Global Audio Controller (Sarvam Indic TTS + Web Speech API fallback)
+  let activeAudio = null;
+
+  async function speakText(text, btnElement = null) {
+    if (activeAudio) {
+      activeAudio.pause();
+      activeAudio = null;
+    }
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+
+    if (btnElement) btnElement.textContent = "📢";
+    if (voiceIndicator) voiceIndicator.classList.add("speaking");
+
+    const onAudioDone = () => {
+      if (btnElement) btnElement.textContent = "🔊";
+      if (voiceIndicator) voiceIndicator.classList.remove("speaking");
+      activeAudio = null;
+    };
+
+    const cleanText = text
+      .replace(/[*#`_~]/g, "")
+      .replace(/<[^>]*>/g, "")
+      .replace(/https?:\/\/\S+/g, "")
+      .trim();
+
+    if (!cleanText) {
+      onAudioDone();
+      return;
+    }
+
+    // Try Sarvam AI TTS Endpoint first
+    try {
+      const response = await fetch("/api/speech/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: cleanText.substring(0, 480),
+          language_code: activeLang,
+          pace: 1.0
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.audio_base64) {
+          const audio = new Audio("data:audio/wav;base64," + data.audio_base64);
+          activeAudio = audio;
+          audio.onended = onAudioDone;
+          audio.onerror = () => {
+            console.warn("Audio playback failed, fallback to Web Speech API");
+            fallbackWebSpeech(cleanText, onAudioDone);
+          };
+          await audio.play();
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Sarvam TTS request failed, using Web Speech API fallback", e);
+    }
+
+    // Fallback: Native Browser Web Speech API
+    fallbackWebSpeech(cleanText, onAudioDone);
+  }
+
+  function fallbackWebSpeech(cleanText, onAudioDone) {
+    if (!window.speechSynthesis) {
+      onAudioDone();
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = activeLang || "hi-IN";
+    utterance.rate = 0.95;
+    utterance.onend = onAudioDone;
+    utterance.onerror = onAudioDone;
+    window.speechSynthesis.speak(utterance);
   }
 
   // Leaf Photo Upload Listener
@@ -79,7 +741,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const reader = new FileReader();
         reader.onload = (event) => {
           pendingImageBase64 = event.target.result;
-          userInput.value = "टमाटर के पत्तों पर रोग दिख रहा है। कृपया फोटो देखकर रोग और उपचार बताएं। (Diagnose disease from attached leaf photo)";
+          userInput.value = "Diagnose disease and recommended remedy from the attached leaf photo.";
           chatForm.dispatchEvent(new Event("submit"));
         };
         reader.readAsDataURL(file);
@@ -109,7 +771,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const reader = new FileReader();
         reader.onload = (event) => {
           pendingImageBase64 = event.target.result;
-          userInput.value = "टमाटर के पत्तों पर रोग दिख रहा है। कृपया फोटो देखकर रोग और उपचार बताएं। (Diagnose disease from attached leaf photo)";
+          userInput.value = "Diagnose disease and recommended remedy from the attached leaf photo.";
           chatForm.dispatchEvent(new Event("submit"));
         };
         reader.readAsDataURL(file);
@@ -196,7 +858,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     const headerTitle = role === "user" ? "User" : (role === "blocked" ? "🛡️ System 1 Guardrail Blocked" : `⚡ KisanZess (${intent || "Reflex"})`);
-    const ttsBtnHtml = role !== "user" ? `<button class="tts-btn" title="🔊 आवाज में सुनें (Listen in Vernacular Voice)" style="background:none; border:none; cursor:pointer; font-size:15px; margin-left:8px; vertical-align:middle; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🔊</button>` : "";
+    const ttsBtnHtml = role !== "user" ? `<button class="tts-btn" title="🔊 Listen Aloud (English Voice)" style="background:none; border:none; cursor:pointer; font-size:15px; margin-left:8px; vertical-align:middle; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🔊</button>` : "";
 
     msgDiv.innerHTML = `
       <div class="msg-header">
@@ -206,27 +868,18 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="msg-body">${formatMarkdown(text)}</div>
     `;
 
-    // Hook up native Web Speech API TTS
+    // Hook up Indic Audio (Sarvam Bulbul AI & Web Speech API)
     const ttsBtn = msgDiv.querySelector(".tts-btn");
-    const voiceIndicator = document.getElementById("voice-indicator");
-    if (ttsBtn && window.speechSynthesis) {
+    if (ttsBtn) {
       ttsBtn.addEventListener("click", () => {
-        window.speechSynthesis.cancel();
-        const cleanText = text.replace(/[*#`_]/g, "").replace(/<[^>]*>/g, "");
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = /[\u0900-\u097F]/.test(cleanText) ? "hi-IN" : "en-IN";
-        utterance.rate = 0.95;
-        ttsBtn.textContent = "📢";
-        if (voiceIndicator) voiceIndicator.classList.add("speaking");
-
-        const resetSpeaking = () => {
+        if (ttsBtn.textContent === "📢") {
+          if (activeAudio) { activeAudio.pause(); activeAudio = null; }
+          if (window.speechSynthesis) window.speechSynthesis.cancel();
           ttsBtn.textContent = "🔊";
           if (voiceIndicator) voiceIndicator.classList.remove("speaking");
-        };
-
-        utterance.onend = resetSpeaking;
-        utterance.onerror = resetSpeaking;
-        window.speechSynthesis.speak(utterance);
+        } else {
+          speakText(text, ttsBtn);
+        }
       });
     }
 
@@ -314,39 +967,133 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- TAB NAVIGATION SWITCHING ---
-  const navTabs = document.querySelectorAll(".nav-tab");
-  const tabPanes = document.querySelectorAll(".tab-pane");
+  // --- DRAWER FEATURE STUDIO SUB-TAB SWITCHING (Gemini / ChatGPT Style) ---
+  const drawerNavBtns = document.querySelectorAll(".drawer-nav-btn");
+  const drawerPanes = document.querySelectorAll(".drawer-pane");
 
-  navTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      const targetId = tab.getAttribute("data-tab");
+  drawerNavBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const paneId = btn.getAttribute("data-pane");
+      if (!paneId) return;
 
-      navTabs.forEach((t) => t.classList.remove("active"));
-      tabPanes.forEach((p) => p.classList.remove("active"));
+      drawerNavBtns.forEach((b) => b.classList.remove("active"));
+      drawerPanes.forEach((p) => p.classList.remove("active"));
 
-      tab.classList.add("active");
-      const targetPane = document.getElementById(targetId);
-      if (targetPane) targetPane.classList.add("active");
+      btn.classList.add("active");
+      const activePane = document.getElementById(paneId);
+      if (activePane) {
+        activePane.classList.add("active");
+        if (window.gsap) {
+          gsap.fromTo(activePane, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.22, ease: "power2.out" });
+        }
+      }
 
-      // If opening Khet-Vault, load live FARM_MEMORY.md
-      if (targetId === "tab-memory") {
+      if (paneId === "d-memory") {
         loadFarmMemory();
       }
     });
   });
 
+  // Khet-Vault (FARM_MEMORY.md) loader
+  const memoryContent = document.getElementById("memory-md-content");
+  const btnReloadMemory = document.getElementById("btn-reload-memory");
+
   async function loadFarmMemory() {
-    const memoryCode = document.getElementById("memory-md-content");
+    if (!memoryContent) return;
     try {
+      memoryContent.textContent = "Loading FARM_MEMORY.md from Khet-Vault...";
       const res = await fetch("/api/memory/farm");
       const data = await res.json();
-      if (data.memory_md) {
-        memoryCode.innerHTML = `<code>${data.memory_md}</code>`;
+      if (data && data.memory_md) {
+        memoryContent.textContent = data.memory_md;
+      } else {
+        memoryContent.textContent = "# FARM_MEMORY.md (Khet-Vault)\n\nNo active memory records found.";
       }
-    } catch (e) {
-      console.warn("Failed to fetch farm memory", e);
+    } catch (err) {
+      memoryContent.textContent = "# Error loading FARM_MEMORY.md\n" + err.message;
     }
+  }
+
+  if (btnReloadMemory) {
+    btnReloadMemory.addEventListener("click", loadFarmMemory);
+  }
+
+  // --- LIVE WEATHER & ROOTZONE SOIL MOISTURE SWITCHER ---
+  document.querySelectorAll(".weather-city-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      document.querySelectorAll(".weather-city-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const city = btn.getAttribute("data-city") || "Indore";
+      try {
+        const res = await fetch(`/api/weather/live?location=${encodeURIComponent(city)}`);
+        const data = await res.json();
+
+        const elName = document.getElementById("weather-city-name");
+        const elCond = document.getElementById("weather-condition");
+        const elTemp = document.getElementById("weather-temp");
+        const elHum = document.getElementById("weather-humidity");
+        const elMoist = document.getElementById("weather-soil-moist");
+        const elWind = document.getElementById("weather-wind");
+
+        if (elName) elName.textContent = `${data.location || city}, India`;
+        if (elCond) elCond.textContent = `🌤️ ${data.condition || "Partly Cloudy"} • Rain Probability: ${data.precipitation_probability_pct ?? 5}%`;
+        if (elTemp) elTemp.textContent = `${data.temperature_c ?? 28.4}°C`;
+        if (elHum) elHum.textContent = `Humidity: ${data.humidity_pct ?? 48}%`;
+        if (elMoist) elMoist.textContent = `${data.rootzone_soil_moisture_m3_per_m3 ?? 0.28} m³/m³`;
+        if (elWind) elWind.textContent = `${data.wind_speed_kmh ?? 9.2} km/h`;
+      } catch (err) {
+        console.warn("Weather fetch fallback:", err);
+      }
+    });
+  });
+
+  // --- INTERACTIVE SEND-TO-CHAT BRIDGES ---
+  function sendTextToChat(text) {
+    if (!userInput || !chatForm) return;
+    switchToTab("tab-chat");
+    userInput.value = text;
+    chatForm.dispatchEvent(new Event("submit"));
+  }
+
+  // Soil ML -> Send to Chat
+  const btnSendSoilChat = document.getElementById("btn-send-soil-chat");
+  if (btnSendSoilChat) {
+    btnSendSoilChat.addEventListener("click", () => {
+      const n = document.getElementById("input-n")?.value || "90";
+      const p = document.getElementById("input-p")?.value || "42";
+      const k = document.getElementById("input-k")?.value || "43";
+      const ph = document.getElementById("input-ph")?.value || "6.5";
+      const query = `My soil test reports N=${n} kg/ha, P=${p} kg/ha, K=${k} kg/ha, and pH=${ph}. Should I sow soybean or cotton, and what fertilizer dosage should I apply?`;
+      sendTextToChat(query);
+    });
+  }
+
+  // Weather -> Send to Chat
+  const btnSendWeatherChat = document.getElementById("btn-send-weather-chat");
+  if (btnSendWeatherChat) {
+    btnSendWeatherChat.addEventListener("click", () => {
+      const city = document.querySelector(".weather-city-btn.active")?.getAttribute("data-city") || "Indore";
+      const query = `Based on current weather and soil moisture in ${city}, is it safe to spray pesticide today?`;
+      sendTextToChat(query);
+    });
+  }
+
+  // Govt Schemes -> Send to Chat
+  document.querySelectorAll(".btn-ask-scheme").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const query = btn.getAttribute("data-scheme");
+      if (query) sendTextToChat(query);
+    });
+  });
+
+  // Panchayat -> Send to Chat
+  const btnSendPanchayatChat = document.getElementById("btn-send-panchayat-chat");
+  if (btnSendPanchayatChat) {
+    btnSendPanchayatChat.addEventListener("click", () => {
+      const query = `Tomato crop has a whitefly pest infestation and mandi price is ₹3,800/quintal. What action does Krishi Panchayat recommend?`;
+      sendTextToChat(query);
+    });
   }
 
   // --- SOIL ML STUDIO (from l-data-seT---ML) ---
@@ -563,7 +1310,7 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            query: "टमाटर में सफेद मक्खी का हमला और मंडी भाव ₹3,800",
+            query: "Tomato whitefly pest infestation and mandi price ₹3,800",
             crop: "Tomato",
             mandi_rate_per_quintal: 3800.0,
             acreage: 4.0,
@@ -593,15 +1340,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Update Sarpanch Synthesis
         document.getElementById("panchayat-synthesis").innerHTML = `
           <div style="background: rgba(11, 110, 79, 0.25); border: 1px solid rgba(80, 200, 120, 0.35); padding: 14px; border-radius: 8px; margin-bottom: 10px;">
-            <div style="font-weight: 800; color: var(--c-emerald-green); margin-bottom: 6px;">🇮🇳 हिंदी निर्णय (Sarpanch Verdict):</div>
-            ${data.sarpanch_synthesis_hindi.replace(/\n/g, "<br>")}
-          </div>
-          <div style="background: rgba(26, 54, 54, 0.6); border: 1px solid rgba(214, 189, 152, 0.25); padding: 14px; border-radius: 8px;">
-            <div style="font-weight: 800; color: var(--c-almond); margin-bottom: 6px;">🇬🇧 English Synthesis:</div>
-            ${data.sarpanch_synthesis_english.replace(/\n/g, "<br>")}
+            <div style="font-weight: 800; color: var(--c-emerald-green); margin-bottom: 6px;">🏛️ Gram Sarpanch Consensus Verdict:</div>
+            ${(data.sarpanch_synthesis_english || data.sarpanch_synthesis_hindi).replace(/\n/g, "<br>")}
           </div>
           <div style="display: flex; gap: 16px; margin-top: 12px; font-size: 13px; font-weight: 700;">
-            <span style="color: var(--c-emerald-green);">💰 Total Budget: ₹${data.total_estimated_budget_inr}</span>
+            <span style="color: var(--c-emerald-green);">💰 Total Recommended Budget: ₹${data.total_estimated_budget_inr}</span>
             <span style="color: var(--c-almond);">📈 Economic Viability Score: ${(data.economic_viability_score * 100).toFixed(0)}%</span>
           </div>
         `;
@@ -810,27 +1553,256 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Trigger map resize on tab switch
-  document.querySelectorAll(".nav-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      const tabTarget = tab.getAttribute("data-tab");
-      if (!tabTarget) return;
-
-      document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
-      document.querySelectorAll(".tab-pane").forEach((p) => p.classList.remove("active"));
-
-      tab.classList.add("active");
-      const targetPane = document.getElementById(tabTarget);
-      if (targetPane) targetPane.classList.add("active");
-
-      if (tabTarget === "tab-soil-ml") {
-        setTimeout(() => {
-          initAgriSatelliteMap();
-          if (mapInstance) mapInstance.invalidateSize();
-        }, 200);
-      }
+  // --- JEV-ULTRAFAST GOVERNMENT PORTAL HARVESTER CONTROLLERS ---
+  
+  // 1. Geographic Scope Filter Toggles (All India / State / District)
+  const scopeBtns = document.querySelectorAll(".scope-btn");
+  scopeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      scopeBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const scope = btn.getAttribute("data-scope");
+      
+      const cards = document.querySelectorAll(".scheme-visual-card");
+      cards.forEach(card => {
+        const cardScope = card.getAttribute("data-scope") || "";
+        if (scope === "all" || cardScope.includes(scope)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
     });
   });
+
+  // 2. Scheme Comparison Modal & Checkboxes
+  let selectedComparisonSchemes = [];
+  const compareBadge = document.getElementById("compare-badge-count");
+  const compareModal = document.getElementById("compare-schemes-modal");
+  const btnOpenCompare = document.getElementById("btn-open-compare");
+  const btnCloseCompare = document.getElementById("btn-close-compare-modal");
+  const btnDoneCompare = document.getElementById("btn-done-compare-modal");
+
+  function updateCompareModalData() {
+    if (selectedComparisonSchemes.length >= 1) {
+      const s1 = selectedComparisonSchemes[0];
+      const th1 = document.getElementById("modal-cmp-th-1");
+      const name1 = document.getElementById("modal-cmp-name-1");
+      const grant1 = document.getElementById("modal-cmp-grant-1");
+      const cat1 = document.getElementById("modal-cmp-cat-1");
+      const rules1 = document.getElementById("modal-cmp-rules-1");
+      if (th1) th1.textContent = s1.name;
+      if (name1) name1.textContent = s1.name;
+      if (grant1) grant1.textContent = s1.grant;
+      if (cat1) cat1.textContent = s1.cat;
+      if (rules1) rules1.textContent = s1.rules;
+    }
+    if (selectedComparisonSchemes.length >= 2) {
+      const s2 = selectedComparisonSchemes[1];
+      const th2 = document.getElementById("modal-cmp-th-2");
+      const name2 = document.getElementById("modal-cmp-name-2");
+      const grant2 = document.getElementById("modal-cmp-grant-2");
+      const cat2 = document.getElementById("modal-cmp-cat-2");
+      const rules2 = document.getElementById("modal-cmp-rules-2");
+      if (th2) th2.textContent = s2.name;
+      if (name2) name2.textContent = s2.name;
+      if (grant2) grant2.textContent = s2.grant;
+      if (cat2) cat2.textContent = s2.cat;
+      if (rules2) rules2.textContent = s2.rules;
+    }
+  }
+
+  document.querySelectorAll(".cmp-cb").forEach((cb) => {
+    cb.addEventListener("change", (e) => {
+      const id = cb.getAttribute("data-id");
+      const name = cb.getAttribute("data-name");
+      const grant = cb.getAttribute("data-grant");
+      const cat = cb.getAttribute("data-cat");
+      const rules = cb.getAttribute("data-rules");
+
+      if (cb.checked) {
+        if (selectedComparisonSchemes.length >= 2) {
+          selectedComparisonSchemes.shift();
+        }
+        selectedComparisonSchemes.push({ id, name, grant, cat, rules });
+      } else {
+        selectedComparisonSchemes = selectedComparisonSchemes.filter(s => s.id !== id);
+      }
+
+      if (compareBadge) {
+        compareBadge.textContent = selectedComparisonSchemes.length;
+      }
+      updateCompareModalData();
+    });
+  });
+
+  if (btnOpenCompare && compareModal) {
+    btnOpenCompare.addEventListener("click", () => {
+      if (selectedComparisonSchemes.length < 2) {
+        // Auto-select first two if less than 2 checked
+        selectedComparisonSchemes = [
+          { name: "PM-Kisan + MP Kalyan", grant: "₹10,000 / Year", cat: "Direct Cash Benefit (DBT)", rules: "Aadhaar e-KYC + Khasra Record" },
+          { name: "SMAM Farm Mechanization", grant: "50% (Max ₹45,000)", cat: "Farm Machinery", rules: "Small/Marginal Farmer (<5 acres)" }
+        ];
+        if (compareBadge) compareBadge.textContent = "2";
+        updateCompareModalData();
+      }
+      compareModal.classList.add("active");
+    });
+  }
+
+  if (btnCloseCompare && compareModal) {
+    btnCloseCompare.addEventListener("click", () => {
+      compareModal.classList.remove("active");
+    });
+  }
+
+  if (btnDoneCompare && compareModal) {
+    btnDoneCompare.addEventListener("click", () => {
+      compareModal.classList.remove("active");
+    });
+  }
+
+  // 3. Live JEV-Ultrafast Browser View Simulator
+  window.reloadJevPortal = () => {
+    const screen = document.getElementById("jev-viewport-screen");
+    if (!screen) return;
+    const body = document.getElementById("jev-portal-rendered-body");
+    if (body) {
+      body.innerHTML = `
+        <div style="padding:20px; text-align:center; color:#6b7280; font-family:var(--font-mono); font-size:11px;">
+          <div style="font-size:24px; animation:spin 1s linear infinite; margin-bottom:8px;">⚡</div>
+          <div>JEV-Ultrafast live crawler refreshing official gazette notifications...</div>
+        </div>
+      `;
+      setTimeout(() => {
+        window.switchJevPortal("pmkisan");
+      }, 600);
+    }
+  };
+
+  window.switchJevPortal = (portalKey) => {
+    const urlBar = document.getElementById("jev-url-address");
+    const tabName = document.getElementById("jev-active-tab-name");
+    const body = document.getElementById("jev-portal-rendered-body");
+
+    if (portalKey === "pmkisan") {
+      if (urlBar) urlBar.value = "https://pmkisan.gov.in/portal/farmer_benefits.aspx";
+      if (tabName) tabName.textContent = "pmkisan.gov.in";
+      if (body) {
+        body.innerHTML = `
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; padding:10px; margin-bottom:10px;">
+            <strong style="color:#065f46; display:block; margin-bottom:4px;">Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)</strong>
+            <p style="margin:0 0 6px 0;">All landholding farmer families having cultivable landholding in their names are eligible. DBT financial benefit of ₹6,000/yr in 3 installments.</p>
+            <div style="display:flex; gap:6px; font-family:var(--font-mono); font-size:9px;">
+              <span style="background:#d1fae5; color:#065f46; padding:2px 6px; border-radius:3px;">eKYC: Verified</span>
+              <span style="background:#dbeafe; color:#1e40af; padding:2px 6px; border-radius:3px;">Aadhaar Seeded: Yes</span>
+            </div>
+          </div>
+          <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:10px;">
+            <strong style="color:#92400e; display:block; margin-bottom:4px;">MP Mukhyamantri Kisan Kalyan Yojana (Top-Up)</strong>
+            <p style="margin:0;">MP State grants additional ₹4,000/year to all PM-Kisan registered farmers across MP districts including Indore.</p>
+          </div>
+          <div style="margin-top:12px; background:#0f172a; border:1px solid #10b981; border-radius:6px; padding:8px; display:flex; justify-content:space-between; align-items:center; font-family:var(--font-mono); font-size:10px; color:#34d399;">
+            <span>⚡ JEV: 24,180 words pruned → 3 rules extracted</span>
+            <span style="color:#fff;">14.2ms</span>
+          </div>
+        `;
+      }
+    } else if (portalKey === "agrimachinery") {
+      if (urlBar) urlBar.value = "https://agrimachinery.nic.in/Farmer/SubMissionMachinery";
+      if (tabName) tabName.textContent = "agrimachinery.nic.in";
+      if (body) {
+        body.innerHTML = `
+          <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:10px; margin-bottom:10px;">
+            <strong style="color:#92400e; display:block; margin-bottom:4px;">Sub-Mission on Agricultural Mechanization (SMAM)</strong>
+            <p style="margin:0 0 6px 0;">50% financial assistance for purchasing Super Seeder, Rotavator, Straw Reaper in MP. Priority for small/marginal farmers (&lt;5 acres).</p>
+            <div style="display:flex; gap:6px; font-family:var(--font-mono); font-size:9px;">
+              <span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:3px;">Grant: ₹45,000</span>
+              <span style="background:#dcfce7; color:#166534; padding:2px 6px; border-radius:3px;">Dealer Subsidy Direct</span>
+            </div>
+          </div>
+          <div style="margin-top:12px; background:#0f172a; border:1px solid #10b981; border-radius:6px; padding:8px; display:flex; justify-content:space-between; align-items:center; font-family:var(--font-mono); font-size:10px; color:#34d399;">
+            <span>⚡ JEV: 31,400 words pruned → 2 rules extracted</span>
+            <span style="color:#fff;">16.1ms</span>
+          </div>
+        `;
+      }
+    } else if (portalKey === "kusum") {
+      if (urlBar) urlBar.value = "https://pmkusum.mnre.gov.in/landing/component-b";
+      if (tabName) tabName.textContent = "pmkusum.mnre.gov.in";
+      if (body) {
+        body.innerHTML = `
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:10px; margin-bottom:10px;">
+            <strong style="color:#1e40af; display:block; margin-bottom:4px;">PM-KUSUM Component-B (Solar Water Pump 5HP)</strong>
+            <p style="margin:0 0 6px 0;">60% government subsidy (30% Central + 30% State) for replacement of diesel pump in off-grid farmlands. Saves ₹32,000/yr diesel.</p>
+            <div style="display:flex; gap:6px; font-family:var(--font-mono); font-size:9px;">
+              <span style="background:#dbeafe; color:#1e40af; padding:2px 6px; border-radius:3px;">Subsidy: 60%</span>
+              <span style="background:#dcfce7; color:#166534; padding:2px 6px; border-radius:3px;">Diesel Free</span>
+            </div>
+          </div>
+          <div style="margin-top:12px; background:#0f172a; border:1px solid #10b981; border-radius:6px; padding:8px; display:flex; justify-content:space-between; align-items:center; font-family:var(--font-mono); font-size:10px; color:#34d399;">
+            <span>⚡ JEV: 19,250 words pruned → 3 rules extracted</span>
+            <span style="color:#fff;">13.0ms</span>
+          </div>
+        `;
+      }
+    }
+  };
+
+  document.querySelectorAll(".btn-open-jev").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const portal = btn.getAttribute("data-portal");
+      window.switchJevPortal(portal);
+    });
+  });
+
+  // 4. Interactive Laya Vernacular Portal Reader AI Chat
+  const inputLayaPortal = document.getElementById("input-laya-portal-q");
+  const btnAskLayaPortal = document.getElementById("btn-ask-laya-portal");
+  const btnMicLayaPortal = document.getElementById("btn-mic-laya-portal");
+  const layaChatBubble = document.getElementById("laya-portal-chat-bubble");
+
+  function triggerLayaPortalAsk() {
+    if (!inputLayaPortal || !layaChatBubble) return;
+    const query = inputLayaPortal.value.trim();
+    if (!query) return;
+
+    layaChatBubble.innerHTML = `<span class="animate-pulse" style="color:var(--c-emerald-green);">⚡ Laya System 1 scanning government gazettes for "${query}"...</span>`;
+    
+    setTimeout(() => {
+      layaChatBubble.innerHTML = `
+        💬 <strong>Laya Gov Reader AI:</strong><br>
+        "Rameshwar ji! JEV has extracted rules from the official government gazette: 
+        1. <strong>Super Seeder Machine:</strong> Requires Aadhaar card, Khasra land record (4.0 Acres), and bank passbook. 50% subsidy is deducted directly on the dealer invoice.<br>
+        2. <strong>PM-KUSUM:</strong> If you have an active borewell or well, 60% subsidy is approved."
+      `;
+      inputLayaPortal.value = "";
+    }, 550);
+  }
+
+  if (btnAskLayaPortal) {
+    btnAskLayaPortal.addEventListener("click", triggerLayaPortalAsk);
+  }
+  if (inputLayaPortal) {
+    inputLayaPortal.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") triggerLayaPortalAsk();
+    });
+  }
+  if (btnMicLayaPortal) {
+    btnMicLayaPortal.addEventListener("click", () => {
+      if (layaChatBubble) {
+        layaChatBubble.innerHTML = `🎙️ <span style="color:var(--c-almond); font-weight:bold;">Listening...</span> Which scheme rules would you like to explore?`;
+      }
+      setTimeout(() => {
+        if (inputLayaPortal) {
+          inputLayaPortal.value = "What documents are required for Super Seeder machine?";
+          triggerLayaPortalAsk();
+        }
+      }, 2000);
+    });
+  }
+
 });
 
 

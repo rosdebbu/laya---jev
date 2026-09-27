@@ -54,6 +54,12 @@ class ReflexRouter:
         self._initialize_provider()
 
     def _initialize_provider(self):
+        # 0. Check explicit heuristic/mock request
+        if self.requested_provider in (ProviderType.HEURISTIC, ProviderType.MOCK):
+            self.active_provider = "fast_reflex_heuristic"
+            logger.info("ReflexRouter initialized with Fast Reflex Heuristic engine")
+            return
+
         # 1. Try Kev (Jared Palmer's open-weights Qwen-based System 1) if requested or base_url given
         if (self.requested_provider == ProviderType.KEV or (self.requested_provider == ProviderType.AUTO and self.kev_base_url)):
             try:
@@ -116,7 +122,13 @@ class ReflexRouter:
 
         if self.active_provider == "laya" and self._laya_router is not None:
             try:
+                state_str = str(state)
+                is_vernacular = any(ord(c) > 127 for c in state_str)
                 result = self._predict_laya(state, questions, start_time)
+                if is_vernacular:
+                    min_conf = min((d.confidence for d in result.decisions.values()), default=1.0)
+                    if min_conf < 0.60:
+                        return self._predict_heuristic(state, questions, start_time)
                 return result
             except Exception as e:
                 logger.warning(f"Laya predict failed, falling back: {e}")
@@ -285,6 +297,9 @@ class ReflexRouter:
         state_str = str(state).lower()
         decisions = {}
 
+        # Extract raw text value from state to avoid matching dictionary keys
+        target_text = " ".join(str(v).lower() for v in state.values())
+
         for q_name, q in questions.items():
             if isinstance(q, NoulQuestion):
                 # Check for explicit safety signals
@@ -293,10 +308,25 @@ class ReflexRouter:
                         "ignore", "system prompt", "override", "pretend you are",
                         "dan mode", "disregard", "bypass", "jailbreak", "dump database"
                     ]
-                    matched = any(t in state_str for t in injection_triggers)
+                    matched = any(t in target_text for t in injection_triggers)
+                elif "destructive" in q_name:
+                    destructive_triggers = [
+                        "format disk", "drop table", "rm -rf", "delete database",
+                        "wipe disk", "shutdown -s", "killall", "destroy all"
+                    ]
+                    matched = any(t in target_text for t in destructive_triggers)
+                elif "sensitive" in q_name:
+                    sensitive_triggers = [
+                        "password", "secret_key", "api_key", "bearer token", "id_rsa"
+                    ]
+                    matched = any(t in target_text for t in sensitive_triggers)
                 else:
-                    instr_words = [w.strip("?,.`'\"").rstrip("s") for w in q.instructions.lower().split() if len(w) > 3]
-                    matched = any(w in state_str for w in instr_words if len(w) > 2)
+                    instr_words = [
+                        w.strip("?,.`'\"").rstrip("s")
+                        for w in q.instructions.lower().split()
+                        if len(w) > 3 and w not in ("does", "task", "input", "system", "user", "agent")
+                    ]
+                    matched = any(w in target_text for w in instr_words if len(w) > 3)
 
                 decisions[q_name] = Decision(
                     name=q_name,
@@ -318,14 +348,19 @@ class ReflexRouter:
                     if opt_desc:
                         for word in opt_desc.lower().split():
                             clean_w = word.strip("?,.`'\"").rstrip("s")
-                            if len(clean_w) > 3 and clean_w in state_str:
+                            if len(clean_w) >= 2 and clean_w in state_str:
                                 key_score += 2
                     if key_score > best_score:
                         best_score = key_score
                         best_choice = opt_key
 
-                if not best_choice or best_score == 0:
-                    best_choice = list(q.criteria.keys())[-1]
+                if not best_choice or best_score <= 0:
+                    if "other" in q.criteria:
+                        best_choice = "other"
+                    elif "general" in q.criteria:
+                        best_choice = "general"
+                    else:
+                        best_choice = list(q.criteria.keys())[0]
 
                 decisions[q_name] = Decision(
                     name=q_name,

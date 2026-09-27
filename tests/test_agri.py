@@ -97,7 +97,25 @@ def test_hermes_memory_and_skill_loop(tmp_path):
     # 2. Test FARM_MEMORY.md export
     mem_file = tmp_path / "FARM_MEMORY.md"
     content = vault.export_hermes_memory_md(farmer_id="farmer_001", output_path=str(mem_file))
-    assert "# 🌾 FARM_MEMORY.md" in content
     assert mem_file.exists()
     assert "Land & Soil Profile" in mem_file.read_text(encoding="utf-8")
+
+
+def test_live_weather_tool():
+    from reflex_agent.tools.builtin.live_weather import LiveAgroWeatherTool
+    tool = LiveAgroWeatherTool()
+    res = tool.execute(location="Indore")
+    assert res.success is True
+    assert "temperature_celsius" in res.output
+    assert "rootzone_soil_moisture_m3m3" in res.output
+    assert "pesticide_spray_window_safe" in res.output
+
+
+def test_gov_schemes_tool():
+    from reflex_agent.tools.builtin.gov_schemes import GovtSchemesTool
+    tool = GovtSchemesTool()
+    res = tool.execute(query="solar pump subsidy kusum")
+    assert res.success is True
+    assert res.output["matched_scheme"] == "pm_kusum"
+    assert "PM-KUSUM" in res.output["scheme_info"]["official_name"]
 

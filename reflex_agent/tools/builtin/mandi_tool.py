@@ -77,6 +77,16 @@ MANDI_PRICE_REGISTRY = {
         "state": "Karnataka / Bihar",
         "trend": "STABLE",
         "msp_status": "MSP: ₹2,090",
+    },
+    "soybean": {
+        "modal_price": 4650,
+        "min_price": 4400,
+        "max_price": 4850,
+        "unit": "₹ / Quintal",
+        "market": "Indore Mandi / Ujjain APMC / Dewas",
+        "state": "Madhya Pradesh (Malwa Plateau)",
+        "trend": "UP (+₹120 this week)",
+        "msp_status": "MSP Benchmark: ₹4,892",
     }
 }
 
@@ -106,6 +116,22 @@ class MandiPriceTool(BaseTool):
                 break
         
         info = MANDI_PRICE_REGISTRY.get(matched_crop, MANDI_PRICE_REGISTRY["paddy"])
+        
+        # Check if caller wants multi-mandi arbitrage comparison
+        if kwargs.get("arbitrage") or "arbitrage" in crop_clean or "compare" in crop_clean or "profit" in crop_clean or "तुलना" in crop_clean or "मुनाफा" in crop_clean:
+            arb = self.calculate_arbitrage(crop=matched_crop, quantity_quintals=float(kwargs.get("quantity", 20.0)))
+            return ToolResult(
+                success=True,
+                output={
+                    "mode": "multi_mandi_arbitrage",
+                    "data": arb,
+                    "summary": (
+                        f"Mandi Arbitrage Report: {arb['crop'].capitalize()} achieves the best price at {arb['best_mandi']}. "
+                        f"After deducting freight transport cost, you gain ₹{arb['net_extra_cash_profit']:,} in net extra cash profit compared to Dewas Mandi."
+                    )
+                }
+            )
+
         res_data = {
             "crop": matched_crop.capitalize(),
             "query_district": chosen_market,
@@ -120,3 +146,45 @@ class MandiPriceTool(BaseTool):
             )
         }
         return ToolResult(success=True, output=res_data)
+
+    @classmethod
+    def calculate_arbitrage(cls, crop: str = "soybean", quantity_quintals: float = 20.0) -> Dict[str, Any]:
+        """
+        Calculates net profit arbitrage across 3 neighboring mandis deducting transport & diesel.
+        """
+        crop_clean = crop.lower().strip()
+        matched = "soybean"
+        for key in MANDI_PRICE_REGISTRY.keys():
+            if key in crop_clean or crop_clean in key:
+                matched = key
+                break
+        
+        base_price = MANDI_PRICE_REGISTRY.get(matched, MANDI_PRICE_REGISTRY["soybean"])["modal_price"]
+        
+        dewas_rate = int(base_price * 0.946)
+        ujjain_rate = int(base_price * 1.015)
+        indore_rate = int(base_price * 1.000)
+        
+        t_dewas = 200
+        t_ujjain = 1680
+        t_indore = 1400
+        
+        gross_dewas = int(dewas_rate * quantity_quintals)
+        gross_ujjain = int(ujjain_rate * quantity_quintals)
+        gross_indore = int(indore_rate * quantity_quintals)
+        
+        net_dewas = gross_dewas - t_dewas
+        net_ujjain = gross_ujjain - t_ujjain
+        net_indore = gross_indore - t_indore
+        
+        extra_profit = net_ujjain - net_dewas
+        
+        return {
+            "crop": matched.capitalize(),
+            "quantity_quintals": quantity_quintals,
+            "dewas": {"rate": dewas_rate, "gross": gross_dewas, "transport": t_dewas, "net": net_dewas, "dist_km": 5},
+            "ujjain": {"rate": ujjain_rate, "gross": gross_ujjain, "transport": t_ujjain, "net": net_ujjain, "dist_km": 42, "extra_profit": extra_profit},
+            "indore": {"rate": indore_rate, "gross": gross_indore, "transport": t_indore, "net": net_indore, "dist_km": 35},
+            "best_mandi": "Ujjain Mandi",
+            "net_extra_cash_profit": extra_profit
+        }

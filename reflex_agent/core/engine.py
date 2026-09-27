@@ -134,8 +134,8 @@ class DualBrainAgent:
                 instructions="What is the primary category of `task`?",
                 criteria={
                     "factual_inquiry": "Asking for specific knowledge, facts, or documentation",
-                    "mandi_price": "Mandi market rates, price of crops today, APMC selling rates, MSP status",
-                    "agricultural_intelligence": "Crop recommendation, soil NPK test, fertilizer dosage, crop disease",
+                    "mandi_price": "Mandi market rates, price of crops today, APMC selling rates, MSP status, मंडी भाव",
+                    "agricultural_intelligence": "Crop recommendation, soil NPK test, fertilizer dosage, crop disease, government schemes, subsidies, yojana, sarkari yojana, PM-KISAN, PM-KUSUM, SMAM, सरकारी योजनाएं, सब्सिडी, अनुदान",
                     "file_management": "Viewing, saving, or checking files",
                     "math_calculation": "Performing numerical calculations or logic",
                     "system_command": "Running terminal or system commands",
@@ -144,7 +144,7 @@ class DualBrainAgent:
                 },
             ),
             "requires_tools": NoulQuestion(
-                instructions="Does fulfilling `task` require executing an external tool (mandi, crop, fertilizer, search, file, shell, calculator)?",
+                instructions="Does fulfilling `task` require executing an external tool (mandi, crop, fertilizer, schemes, subsidy, yojana, weather, search, file, shell, calculator)?",
             ),
         }
 
